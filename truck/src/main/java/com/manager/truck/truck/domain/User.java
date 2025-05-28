@@ -59,5 +59,14 @@ public class User {
         this.createDate = new Date();
         this.state = true;
     }
+    @PreUpdate
+    void preUpdate(){
+        this.updateDate = new Date();
+    }
+
+
+    @ManyToOne()
+    @JoinColumn(name = Constants.User.company.NAME, referencedColumnName = Constants.Company.Id.NAME)
+    private Company company;
 
 }
