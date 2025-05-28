@@ -3,11 +3,9 @@ package com.manager.truck.truck.controller;
 import com.manager.truck.truck.domain.dto.request.UserRequest;
 import com.manager.truck.truck.domain.dto.response.UserResponse;
 import com.manager.truck.truck.domain.dto.response.UsersResponse;
-import com.manager.truck.truck.usecase.*;
+import com.manager.truck.truck.usecase.user.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 public class UserController {

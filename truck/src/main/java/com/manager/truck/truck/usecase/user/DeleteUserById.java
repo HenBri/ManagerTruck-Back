@@ -1,18 +1,19 @@
-package com.manager.truck.truck.usecase;
+package com.manager.truck.truck.usecase.user;
 
 import com.manager.truck.truck.domain.User;
-import com.manager.truck.truck.domain.dto.response.UserResponse;
 import com.manager.truck.truck.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class GetUserByIdUseCase {
+public class DeleteUserById {
     @Autowired
     private UserService userService;
 
-    public UserResponse execute(Long id){
-        User builduser = userService.findById(id);
-        return new UserResponse(builduser);
+    public void execute(Long id){
+        User user= userService.findById(id);
+        user.setState(false);
+
+        userService.update(user);
     }
 }

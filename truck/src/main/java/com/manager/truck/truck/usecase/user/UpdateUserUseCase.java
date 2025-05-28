@@ -1,4 +1,4 @@
-package com.manager.truck.truck.usecase;
+package com.manager.truck.truck.usecase.user;
 
 import com.manager.truck.truck.domain.User;
 import com.manager.truck.truck.domain.dto.request.UserRequest;
