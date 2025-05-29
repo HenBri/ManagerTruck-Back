@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.WebProperties;
 
 import java.util.Date;
 
@@ -16,20 +14,20 @@ import java.util.Date;
 public class Company {
 
     @Id
-    @Column(name = Constants.Company.Id.NAME)
+    @Column(name = Constants.CompanyTable.Id.NAME)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = Constants.Company.name.NAME, length = Constants.Company.name.LENGTH, nullable = false)
+    @Column(name = Constants.CompanyTable.Name.NAME, length = Constants.CompanyTable.Name.LENGTH, nullable = false)
     private String name;
-    @Column(name = Constants.Company.address.NAME, length = Constants.Company.address.LENGTH, nullable = false)
+    @Column(name = Constants.CompanyTable.Address.NAME, length = Constants.CompanyTable.Address.LENGTH, nullable = false)
     private String address;
-    @Column(name = Constants.Company.phone.NAME, nullable = false)
+    @Column(name = Constants.CompanyTable.Phone.NAME, nullable = false)
     private Integer phone;
-    @Column(name = Constants.Company.email.NAME, length = Constants.Company.email.LENGTH, nullable = true)
+    @Column(name = Constants.CompanyTable.Email.NAME, length = Constants.CompanyTable.Email.LENGTH, nullable = true)
     private String email;
-    @Column(name = Constants.Company.createDate.NAME, nullable = false)
+    @Column(name = Constants.CompanyTable.CreateDate.NAME, nullable = false)
     private Date createDate;
-    @Column(name = Constants.Company.state.NAME, nullable = false)
+    @Column(name = Constants.CompanyTable.State.NAME, nullable = false)
     private Boolean state;
 
     @PrePersist
