@@ -26,7 +26,6 @@ public class UserSaveUseCase {
         user.setEmail(userRequest.getEmail());
         user.setPhone(userRequest.getPhone());
         user.setCi(userRequest.getCi());
-        user.setRole(userRequest.getRole());
         return user;
     }
     private UserResponse userResponseBuild(User user){
