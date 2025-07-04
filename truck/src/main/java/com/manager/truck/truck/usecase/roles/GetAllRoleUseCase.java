@@ -14,8 +14,9 @@ public class GetAllRoleUseCase {
     private RoleService roleService;
 
     public RolesResponse execute(){
-        List<Roles> roles=roleService.findAll();
-         return new RolesResponse(roles);
+        List<Roles> userRoles = roleService.findAll();
+
+        return new RolesResponse(userRoles);
     }
 
 }

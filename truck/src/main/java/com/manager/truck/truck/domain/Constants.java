@@ -24,9 +24,6 @@ public final class Constants {
             public static final String NAME = "user_ci";
             public static final int LENGTH = 15;
         }
-        static final class Role {
-            public static final String NAME = "user_role";
-        }
         static final class State {
             public static final String NAME = "user_state";
         }
@@ -123,6 +120,34 @@ public final class Constants {
         static final class User{
             static final String NAME = "user_id";
         }
+    }
+    public static final class ClientTable{
+        public static final String NAME= "client_table";
+        public static final class Id{
+            public static final String NAME = "client_id";
+        }
+        public static final class Name{
+            public static final String NAME = "client_name";
+            public static final int LENGTH = 50;
+        }
+        public static final class Phone{
+            public static final String NAME = "client_phone";
+        }
+        public static final class Email{
+            public static final String NAME = "client_email";
+            public static final int LENGTH = 50;
+        }
+        public static final class Address{
+            public static final String NAME = "client_address";
+            public static final int LENGTH = 250;
+        }
+        public static final class State{
+            public static final String NAME="client_state";
+        }
+        public static final class Date{
+            public static final String NAME="client_createDate";
+        }
+
     }
 
 }

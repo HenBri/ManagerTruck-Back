@@ -1,5 +1,6 @@
 package com.manager.truck.truck.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,6 +11,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Table(name = Constants.RoleTable.NAME)
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Roles {
 
     @Id
