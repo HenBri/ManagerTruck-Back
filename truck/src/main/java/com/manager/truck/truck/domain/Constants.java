@@ -46,6 +46,20 @@ public final class Constants {
         }
     }
 
+    public static final class RoleTable {
+        public static final String NAME = "role_table";
+        public static final class Id{
+            public static final String NAME = "role_id";
+        }
+        public static final class Role {
+            public static final String NAME = "role";
+        }
+        public static final class Description {
+            public static final String NAME = "role_description";
+            public static final int LENGTH = 250;
+        }
+    }
+
     public static final class CompanyTable {
         public static final String NAME = "company_Table";
         public static final class Id{

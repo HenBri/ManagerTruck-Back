@@ -27,7 +27,6 @@ public class UpdateUserUseCase {
         user.setEmail(userRequest.getEmail());
         user.setPhone(userRequest.getPhone());
         user.setCi(userRequest.getCi());
-        user.setRole(userRequest.getRole());
         return user;
     }
 

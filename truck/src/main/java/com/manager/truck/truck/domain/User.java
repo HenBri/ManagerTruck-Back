@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -31,18 +34,11 @@ public class User {
     @Column(name = Constants.UserTable.Ci.NAME, length = Constants.UserTable.Ci.LENGTH, nullable = false)
     private String ci;
 
-    @Column(name = Constants.UserTable.Role.NAME, nullable = false)
-    @Enumerated(EnumType.STRING)
-    private Role role;
-
     @Column(name = Constants.UserTable.State.NAME, nullable = false)
     private Boolean state;
 
     @Column(name = Constants.UserTable.CreateDate.NAME, nullable = false)
     private Date createDate;
-
-
-
 
     @Column(name = Constants.UserTable.UpdateDate.NAME, nullable = true)
     private Date updateDate;
@@ -63,10 +59,16 @@ public class User {
         this.updateDate = new Date();
     }
 
-
     @ManyToOne()
     @JoinColumn(name = Constants.UserTable.Company.NAME, referencedColumnName = Constants.CompanyTable.Id.NAME)
     private Company company;
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_role",
+            joinColumns = @JoinColumn(name = Constants.UserTable.Id.NAME, referencedColumnName = Constants.UserTable.Id.NAME),
+            inverseJoinColumns = @JoinColumn(name = Constants.RoleTable.Id.NAME, referencedColumnName = Constants.RoleTable.Id.NAME))
+    private Set<Roles> roles = new HashSet<>();
 
 
 }

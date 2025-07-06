@@ -12,6 +12,4 @@ public class UserRequest {
     private String email;
     private Integer phone;
     private String ci;
-
-    private Role role;
 }
