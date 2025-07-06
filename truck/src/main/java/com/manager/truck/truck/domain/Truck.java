@@ -17,7 +17,7 @@ public class Truck {
 
     @Id
     @Column(name= Constants.TruckTable.Id.NAME, nullable = false)
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
 
