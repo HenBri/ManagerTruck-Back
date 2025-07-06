@@ -197,6 +197,9 @@ public final class Constants {
         public static final class Date{
             public static final String NAME = "container_date";
         }
+        public static final class Weight{
+            public static final String NAME = "container_weight";
+        }
     }
 
 }

@@ -26,6 +26,8 @@ public class Container {
     private Boolean state;
     @Column(name = Constants.Container.Date.NAME)
     private Date date;
+    @Column(name = Constants.Container.Weight.NAME)
+    private Double Weight;
 
     @PrePersist
     void prePersist(){
