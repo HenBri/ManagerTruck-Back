@@ -19,7 +19,7 @@ public class UpdateChargeUseCase {
     }
 
     private Charge chargeBuild(Long id, ChargeRequest chargeRequest){
-        Charge charge = chargeService.findById(id);
+        Charge charge = chargeService.getById(id);
         charge.setDescription(chargeRequest.getDescription());
         charge.setType(chargeRequest.getType());
         return charge;

@@ -1,6 +1,7 @@
 package com.manager.truck.truck.domain;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,6 +12,7 @@ import java.util.Date;
 @Setter
 @Entity
 @Table(name = Constants.ChargeTable.NAME)
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Charge {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,6 +30,7 @@ public class Charge {
     @PrePersist
     void prePersist(){
         this.date = new Date();
+        this.state = true;
     }
 
 

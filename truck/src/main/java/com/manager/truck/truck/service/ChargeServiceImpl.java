@@ -12,15 +12,15 @@ public class ChargeServiceImpl implements ChargeService{
 
     @Autowired
     private ChargeRepository chargeRepository;
-
+    @Override
     public Charge save(Charge charge) {
         return chargeRepository.save(charge);
     }
-
-    public Charge findById(Long id) {
+    @Override
+    public Charge getById(Long id) {
         return chargeRepository.getById(id);
     }
-
+    @Override
     public List<Charge> findAll() {
         return chargeRepository.findAll();
     }
