@@ -1,5 +1,6 @@
 package com.manager.truck.truck.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,6 +11,7 @@ import java.util.Date;
 @Getter
 @Setter
 @Table(name = Constants.ContractTable.NAME)
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Contract {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
