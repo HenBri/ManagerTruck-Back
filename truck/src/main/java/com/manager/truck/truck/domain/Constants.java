@@ -149,5 +149,54 @@ public final class Constants {
         }
 
     }
+    public static final class ChargeTable{
+        public static final String NAME = "charge_table";
+        public static final class Id{
+            public static final String NAME = "charge_id";
+        }
+        public static final class Description{
+            public static final String NAME = "charge_description";
+            public static final int LENGTH = 250;
+        }
+        public static final class Date{
+            public static final String NAME = "charge_date";
+        }
+        public static final class Type{
+            public static final String NAME = "charge_type";
+        }
+        public static final class Truck{
+            public static final String NAME = "truck_id";
+        }
+        public static final class Client{
+            public static final String NAME = "client_id";
+        }
+        public static final class State{
+            public static final String NAME = "charge_state";
+        }
+    }
+    public static final class Container{
+        public static final String NAME = "container_table";
+        public static final class Id{
+            public static final String NAME = "container_id";
+        }
+        public static final class Code{
+            public static final String NAME = "container_code";
+            public static final int LENGTH = 20;
+        }
+        public static final class Description{
+            public static final String NAME = "container_description";
+            public static final int LENGTH = 250;
+        }
+        public static final class Type{
+            public static final String NAME = "container_type";
+            public static final int LENGTH = 50;
+        }
+        public static final class State{
+            public static final String NAME = "container_state";
+        }
+        public static final class Date{
+            public static final String NAME = "container_date";
+        }
+    }
 
 }
