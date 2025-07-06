@@ -22,6 +22,6 @@ public class ContractServiceImpl implements ContractService{
     }
 
     public List<Contract> findAll() {
-        return contractRepository.findAll(); .
+        return contractRepository.findAll();
     }
 }

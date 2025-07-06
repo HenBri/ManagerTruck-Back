@@ -11,7 +11,7 @@ public class DeleteChargeUseCase {
     private ChargeService chargeService;
 
     public void execute(Long id){
-        Charge charge = chargeService.findById(id);
+        Charge charge = chargeService.getById(id);
         charge.setState(false);
         chargeService.save(charge);
     }

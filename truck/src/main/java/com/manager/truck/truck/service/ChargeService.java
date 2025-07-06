@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface ChargeService {
     Charge save(Charge charge);
-    Charge findById(Long id);
+    Charge getById(Long id);
     List<Charge> findAll();
 }

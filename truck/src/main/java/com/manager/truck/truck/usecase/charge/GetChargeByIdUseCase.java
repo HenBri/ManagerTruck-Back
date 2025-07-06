@@ -11,6 +11,6 @@ public class GetChargeByIdUseCase {
     private ChargeService chargeService;
 
     public ChargeResponse execute(Long id){
-        return new ChargeResponse(chargeService.findById(id));
+        return new ChargeResponse(chargeService.getById(id));
     }
 }
