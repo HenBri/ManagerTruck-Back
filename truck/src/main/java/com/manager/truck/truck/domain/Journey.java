@@ -1,5 +1,6 @@
 package com.manager.truck.truck.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.*;
@@ -11,7 +12,8 @@ import java.util.Date;
 @Entity
 @Getter
 @Setter
-@Table(name = "journey")
+@Table(name = Constants.JourneyTable.NAME)
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Journey {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
