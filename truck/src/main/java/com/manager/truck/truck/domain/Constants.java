@@ -254,5 +254,37 @@ public final class Constants {
             public static final int LENGTH = 250;
         }
     }
+    public static final class ContractTable{
+        public static final String NAME = "contract_table";
+        public static final class Id{
+            public static final String NAME = "contract_id";
+        }
+        public static final class Description{
+            public static final String NAME = "contract_description";
+            public static final int LENGTH = 250;
+        }
+        public static final class Type{
+            public static final String NAME = "contract_type";
+            public static final int LENGTH = 50;
+        }
+        public static final class State{
+            public static final String NAME = "contract_state";
+        }
+        public static final class Date{
+            public static final String NAME = "contract_date";
+        }
+        public static final class Amount{
+            public static final String NAME = "contract_amount";
+        }
+        public static final class Journey{
+            public static final String NAME = "journey_id";
+        }
+        public static final class User{
+            public static final String NAME = "user_id";
+        }
+        public static final class Company{
+            public static final String NAME = "company_id";
+        }
+    }
 
 }
