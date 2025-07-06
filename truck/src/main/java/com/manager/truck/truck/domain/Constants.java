@@ -202,4 +202,57 @@ public final class Constants {
         }
     }
 
+    public static final class JourneyTable{
+        public static final String NAME = "journey_table";
+        public static final class Id{
+            public static final String NAME = "journey_id";
+        }
+        public static final class Description{
+            public static final String NAME = "journey_description";
+            public static final int LENGTH = 250;
+        }
+        public static final class DateStart{
+            public static final String NAME = "journey_start_date";
+        }
+        public static final class DateEnd{
+            public static final String NAME = "journey_end_date";
+        }
+        public static final class Type{
+            public static final String NAME = "journey_type";
+            public static final int LENGTH = 50;
+        }
+        public static final class StateJourney{
+            public static final String NAME = "journey_state";
+        }
+        public static final class Truck{
+            public static final String NAME = "truck_id";
+        }
+        public static final class Client{
+            public static final String NAME = "client_id";
+        }
+        public static final class Container{
+            public static final String NAME = "container_id";
+        }
+        public static final class Charge{
+            public static final String NAME = "charge_id";
+        }
+        public static final class User{
+            public static final String NAME = "user_id";
+        }
+        public static final class Company{
+            public static final String NAME = "company_id";
+        }
+        public static final class State{
+            public static final String NAME = "journey_state_table";
+        }
+        public static final class Origin{
+            public static final String NAME = "journey_origin";
+            public static final int LENGTH = 250;
+        }
+        public static final class Destination{
+            public static final String NAME = "journey_destination";
+            public static final int LENGTH = 250;
+        }
+    }
+
 }
