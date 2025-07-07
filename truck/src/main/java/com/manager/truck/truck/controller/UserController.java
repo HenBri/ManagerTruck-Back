@@ -24,9 +24,9 @@ public class UserController {
 
 
 
-    @PostMapping("/user")
-    public UserResponse save(@RequestBody UserRequest userRequest){
-       return userSaveUseCase.execute(userRequest);
+    @PostMapping("/saveUser/{companyId}/{roleId}")
+    public UserResponse save(@RequestBody UserRequest userRequest, @PathVariable Long companyId, @PathVariable Long roleId){
+       return userSaveUseCase.execute(userRequest, companyId, roleId);
     }
     @GetMapping("GetUserById/{userId}")
     public UserResponse getUserById(@PathVariable Long userId){

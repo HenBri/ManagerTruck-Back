@@ -22,9 +22,9 @@ public class ContainerController {
     private DeleteContainerByUseCase deleteContainerUseCase;
 
 
-    @PostMapping("saveContainer")
-    public ContainerResponse save(@RequestBody ContainerRequest containerRequest){
-        return saveContainerUseCase.execute(containerRequest);
+    @PostMapping("saveContainer/{chargeId}")
+    public ContainerResponse save(@RequestBody ContainerRequest containerRequest,@PathVariable Long chargeId){
+        return saveContainerUseCase.execute(containerRequest, chargeId);
     }
     @GetMapping("getAllContainer")
     public ContainersResponse getAll(){

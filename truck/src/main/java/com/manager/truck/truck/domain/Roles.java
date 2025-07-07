@@ -26,7 +26,4 @@ public class Roles {
     @Column(name = Constants.RoleTable.Description.NAME, length = Constants.RoleTable.Description.LENGTH, nullable = true)
     private String description;
 
-    @ManyToMany(mappedBy = "roles")
-    private Set<User> users;
-
 }

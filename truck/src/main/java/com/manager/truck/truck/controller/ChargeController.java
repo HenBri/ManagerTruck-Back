@@ -20,9 +20,9 @@ public class ChargeController {
     @Autowired
     private UpdateChargeUseCase updateChargeUseCase;
 
-    @PostMapping("saveCharge")
-    public ChargeResponse save(@RequestBody ChargeRequest chargeRequest){
-        return saveChargeUseCase.execute(chargeRequest);
+    @PostMapping("saveCharge/{clientId}/{contractId}")
+    public ChargeResponse save(@RequestBody ChargeRequest chargeRequest, @PathVariable Long clientId,@PathVariable Long contractId){
+        return saveChargeUseCase.execute(chargeRequest, clientId, contractId);
     }
     @GetMapping("getAllCharge")
     public ChargesResponse getAll(){

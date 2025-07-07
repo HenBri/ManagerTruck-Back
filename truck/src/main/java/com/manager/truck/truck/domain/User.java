@@ -59,16 +59,12 @@ public class User {
         this.updateDate = new Date();
     }
 
-    @ManyToOne()
+    @ManyToOne
     @JoinColumn(name = Constants.UserTable.Company.NAME, referencedColumnName = Constants.CompanyTable.Id.NAME)
     private Company company;
-
-    @ManyToMany
-    @JoinTable(
-            name = "user_role",
-            joinColumns = @JoinColumn(name = Constants.UserTable.Id.NAME, referencedColumnName = Constants.UserTable.Id.NAME),
-            inverseJoinColumns = @JoinColumn(name = Constants.RoleTable.Id.NAME, referencedColumnName = Constants.RoleTable.Id.NAME))
-    private Set<Roles> roles = new HashSet<>();
+    @ManyToOne
+    @JoinColumn(name = Constants.UserTable.Role.NAME, referencedColumnName = Constants.RoleTable.Id.NAME)
+    private Roles roles;
 
 
 }
