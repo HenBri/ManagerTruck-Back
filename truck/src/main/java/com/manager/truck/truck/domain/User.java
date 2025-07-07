@@ -53,6 +53,7 @@ public class User {
     void prePersist(){
         this.createDate = new Date();
         this.state = true;
+        this.password = this.name+"123";
     }
     @PreUpdate
     void preUpdate(){
