@@ -15,7 +15,7 @@ import java.util.Date;
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Container {
     @Id
-    @Column(name = Constants.Container.NAME)
+    @Column(name = Constants.Container.Id.NAME)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -31,6 +31,10 @@ public class Container {
     private Date date;
     @Column(name = Constants.Container.Weight.NAME)
     private Double Weight;
+
+    @ManyToOne
+    @JoinColumn(name = Constants.Container.Charge.NAME, referencedColumnName = Constants.ChargeTable.Id.NAME)
+    private Charge charge;
 
     @PrePersist
     void prePersist(){

@@ -21,9 +21,13 @@ public class JourneyController {
     @Autowired
     private UpdateJourneyUseCase updateJourneyUseCase;
 
-    @PostMapping("saveJourney")
-    public JourneyResponse save(@RequestBody JourneyRequest journeyRequest){
-        return saveJourneyUseCase.execute(journeyRequest);
+    @PostMapping("saveJourney/{contractId}/{truckId}/{containerId}/{userId}")
+    public JourneyResponse save(@RequestBody JourneyRequest journeyRequest,
+                                @PathVariable Long contractId,
+                                @PathVariable Long truckId,
+                                @PathVariable Long containerId,
+                                @PathVariable Long userId){
+        return saveJourneyUseCase.execute(journeyRequest, contractId,truckId,containerId,userId);
     }
     @GetMapping("getAllJourney")
     public JourneysResponse getAll(){

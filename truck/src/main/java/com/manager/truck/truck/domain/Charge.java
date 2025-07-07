@@ -27,6 +27,14 @@ public class Charge {
     @Column(name = Constants.ChargeTable.State.NAME)
     private Boolean state;
 
+    @ManyToOne
+    @JoinColumn(name = Constants.ChargeTable.Client.NAME, referencedColumnName = Constants.ClientTable.Id.NAME)
+    private Client client;
+
+    @ManyToOne
+    @JoinColumn(name = Constants.ChargeTable.Contract.NAME, referencedColumnName = Constants.ContractTable.Id.NAME, nullable = true)
+    private Contract contract;
+
     @PrePersist
     void prePersist(){
         this.date = new Date();

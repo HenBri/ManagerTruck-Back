@@ -20,9 +20,9 @@ public class TruckController {
     @Autowired
     private UpdateTruckUseCase updateTruck;
 
-    @PostMapping("/saveTruck")
-    public TruckResponse save(@RequestBody TruckRequest truckRequest){
-        return saveTruck.execute(truckRequest);
+    @PostMapping("/saveTruck/{userId}")
+    public TruckResponse save(@RequestBody TruckRequest truckRequest,@PathVariable Long userId){
+        return saveTruck.execute(truckRequest,userId);
     }
     @GetMapping("getById/{id}")
     public TruckResponse getById(@PathVariable Long id){

@@ -38,6 +38,25 @@ public class Journey {
     @Column(name = Constants.JourneyTable.Type.NAME, length = Constants.JourneyTable.Type.LENGTH)
     private String type;
 
+    @OneToOne
+    @JoinColumn(name = Constants.JourneyTable.Container.NAME, referencedColumnName = Constants.Container.Id.NAME)
+    private Container container;
+
+
+    @ManyToOne
+    @JoinColumn(name = Constants.JourneyTable.Truck.NAME, referencedColumnName = Constants.TruckTable.Id.NAME)
+    private Truck truck;
+
+    @ManyToOne
+    @JoinColumn(name = Constants.JourneyTable.Contract.NAME, referencedColumnName = Constants.ContractTable.Id.NAME)
+    private Contract contract;
+
+    @ManyToOne
+    @JoinColumn(name = Constants.JourneyTable.User.NAME, referencedColumnName = Constants.UserTable.Id.NAME)
+    private User user;
+
+
+
 
     @PrePersist
     void prePersist(){

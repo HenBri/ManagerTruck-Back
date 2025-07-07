@@ -37,6 +37,9 @@ public final class Constants {
             public static final String NAME = "password";
             public static final int LENGTH = 100;
         }
+        static final class Role {
+            public static final String NAME = "role_id";
+        }
 
         static final class Company {
             public static final String NAME = "company_id";
@@ -173,6 +176,9 @@ public final class Constants {
         public static final class State{
             public static final String NAME = "charge_state";
         }
+        public static final class Contract{
+            public static final String NAME = "contract_id";
+        }
     }
     public static final class Container{
         public static final String NAME = "container_table";
@@ -199,6 +205,9 @@ public final class Constants {
         }
         public static final class Weight{
             public static final String NAME = "container_weight";
+        }
+        public static final class Charge{
+            public static final String NAME = "charge_id";
         }
     }
 
@@ -252,6 +261,9 @@ public final class Constants {
         public static final class Destination{
             public static final String NAME = "journey_destination";
             public static final int LENGTH = 250;
+        }
+        public static final class Contract{
+            public static final String NAME = "contract_id";
         }
     }
     public static final class ContractTable{
