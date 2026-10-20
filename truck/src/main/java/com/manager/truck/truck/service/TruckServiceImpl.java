@@ -1,18 +1,18 @@
 package com.manager.truck.truck.service;
 
 import com.manager.truck.truck.domain.Truck;
+import com.manager.truck.truck.exception.ResourceNotFoundException;
 import com.manager.truck.truck.repository.TruckRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
-public class TruckServiceImpl implements TruckService{
+@RequiredArgsConstructor
+public class TruckServiceImpl implements TruckService {
 
-    @Autowired
-    private TruckRepository truckRepository;
-
+    private final TruckRepository truckRepository;
 
     @Override
     public Truck save(Truck truck) {
@@ -20,14 +20,36 @@ public class TruckServiceImpl implements TruckService{
     }
 
     @Override
-    public Truck getTruckById(Long id) {
-        return truckRepository.getById(id);
+    public Truck findByCompanyIdAndTruckId(Long companyId, Long truckId) {
+        return truckRepository.findByCompanyIdAndTruckId(companyId, truckId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Camión no encontrado con el id " + truckId + " en la empresa " + companyId));
     }
 
     @Override
-    public List<Truck> findAll() {
-        return truckRepository.findAll();
+    public Truck findByCompanyIdAndTruckIdForUpdate(Long companyId, Long truckId) {
+        return truckRepository.findByCompanyIdAndTruckIdForUpdate(companyId, truckId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Camión no encontrado con el id " + truckId + " en la empresa " + companyId));
     }
 
+    @Override
+    public boolean existsByCompanyIdAndTruckBoard(Long companyId, String truckBoard) {
+        return truckRepository.existsByCompanyIdAndTruckBoard(companyId, truckBoard);
+    }
 
+    @Override
+    public boolean existsByCompanyIdAndTruckBoardAndTruckIdNot(Long companyId, String truckBoard, Long truckId) {
+        return truckRepository.existsByCompanyIdAndTruckBoardAndTruckIdNot(companyId, truckBoard, truckId);
+    }
+
+    @Override
+    public Page<Truck> findByCompanyId(Long companyId, Pageable pageable) {
+        return truckRepository.findByCompanyId(companyId, pageable);
+    }
+
+    @Override
+    public Page<Truck> findByCompanyIdAndOwnerPartnerId(Long companyId, Long ownerPartnerId, Pageable pageable) {
+        return truckRepository.findByCompanyIdAndOwnerPartnerId(companyId, ownerPartnerId, pageable);
+    }
 }

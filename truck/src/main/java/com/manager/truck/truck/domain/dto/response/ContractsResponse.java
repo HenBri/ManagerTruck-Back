@@ -1,7 +1,5 @@
 package com.manager.truck.truck.domain.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.manager.truck.truck.domain.Contract;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,11 +7,21 @@ import java.util.List;
 
 @Getter
 @Setter
-public class ContractsResponse extends CommonResponse{
-    private List<Contract> contracts;
+public class ContractsResponse extends CommonResponse {
 
-    public ContractsResponse(List<Contract> contracts) {
-        super(StatusCodeResponse.SUCCESS_CODE,StatusCodeResponse.SUCCESS_MSG);
+    private List<ContractResponse> contracts;
+    private int page;
+    private int size;
+    private long totalElements;
+    private int totalPages;
+
+    public ContractsResponse(List<ContractResponse> contracts, int page, int size,
+                             long totalElements, int totalPages) {
+        super(StatusCodeResponse.SUCCESS_CODE, StatusCodeResponse.SUCCESS_MSG);
         this.contracts = contracts;
+        this.page = page;
+        this.size = size;
+        this.totalElements = totalElements;
+        this.totalPages = totalPages;
     }
 }

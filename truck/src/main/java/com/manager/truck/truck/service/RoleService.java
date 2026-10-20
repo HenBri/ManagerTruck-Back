@@ -1,12 +1,20 @@
 package com.manager.truck.truck.service;
 
-import com.manager.truck.truck.domain.Roles;
+import com.manager.truck.truck.domain.Role;
 
 import java.util.List;
 
 public interface RoleService {
-    Roles save(Roles roles);
-    Roles findById(Long id);
-    Roles update(Roles roles);
-    List<Roles> findAll();
+
+    Role save(Role role);
+
+    Role findById(Integer roleId);
+
+    Role findByRoleName(String roleName);
+
+    Role update(Role role);
+
+    List<Role> findAll();
+
+    boolean existsByRoleName(String roleName);
 }

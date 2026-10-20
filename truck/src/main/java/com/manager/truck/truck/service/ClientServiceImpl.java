@@ -1,17 +1,20 @@
 package com.manager.truck.truck.service;
 
 import com.manager.truck.truck.domain.Client;
+import com.manager.truck.truck.exception.ResourceNotFoundException;
 import com.manager.truck.truck.repository.ClientRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Optional;
 
 @Service
-public class ClientServiceImpl implements ClientService{
-    @Autowired
-    private ClientRepository clientRepository;
+@RequiredArgsConstructor
+public class ClientServiceImpl implements ClientService {
 
+    private final ClientRepository clientRepository;
 
     @Override
     public Client save(Client client) {
@@ -19,18 +22,24 @@ public class ClientServiceImpl implements ClientService{
     }
 
     @Override
-    public Client GetById(Long id) {
-        return clientRepository.getById(id);
+    public Client findByCompanyIdAndClientId(Long companyId, Long clientId) {
+        return clientRepository.findByCompanyIdAndClientId(companyId, clientId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Cliente no encontrado con el id " + clientId + " en la empresa " + companyId));
     }
 
     @Override
-    public List<Client> GetAll() {
-        return clientRepository.findAll();
+    public Optional<Client> findOptionalByCompanyIdAndClientId(Long companyId, Long clientId) {
+        return clientRepository.findByCompanyIdAndClientId(companyId, clientId);
     }
 
     @Override
-    public Client update(Client client) {
-        return clientRepository.save(client);
+    public Page<Client> findByCompanyId(Long companyId, Pageable pageable) {
+        return clientRepository.findByCompanyId(companyId, pageable);
     }
 
+    @Override
+    public Page<Client> findByCompanyIdAndClientState(Long companyId, Boolean clientState, Pageable pageable) {
+        return clientRepository.findByCompanyIdAndClientState(companyId, clientState, pageable);
+    }
 }

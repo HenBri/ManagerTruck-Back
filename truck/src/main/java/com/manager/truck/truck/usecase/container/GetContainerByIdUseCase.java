@@ -1,16 +1,25 @@
 package com.manager.truck.truck.usecase.container;
 
+import com.manager.truck.truck.domain.Container;
 import com.manager.truck.truck.domain.dto.response.ContainerResponse;
+import com.manager.truck.truck.security.CurrentUserProvider;
+import com.manager.truck.truck.service.CompanyService;
 import com.manager.truck.truck.service.ContainerService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class GetContainerByIdUseCase {
-    @Autowired
-    private ContainerService containerService;
 
-    public ContainerResponse execute(Long id){
-        return new ContainerResponse(containerService.getById(id));
+    private final ContainerService containerService;
+    private final CompanyService companyService;
+    private final CurrentUserProvider currentUserProvider;
+
+    public ContainerResponse execute(Long companyId, Long containerId) {
+        currentUserProvider.requireCompanyAdmin(companyId);
+        companyService.findById(companyId);
+        Container container = containerService.findByCompanyIdAndContainerId(companyId, containerId);
+        return ContainerResponse.from(container);
     }
 }

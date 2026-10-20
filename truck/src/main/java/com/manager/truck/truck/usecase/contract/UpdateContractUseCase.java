@@ -1,32 +1,33 @@
 package com.manager.truck.truck.usecase.contract;
 
 import com.manager.truck.truck.domain.Contract;
-import com.manager.truck.truck.domain.dto.request.ContractRequest;
+import com.manager.truck.truck.domain.dto.request.ContractUpdateRequest;
 import com.manager.truck.truck.domain.dto.response.ContractResponse;
+import com.manager.truck.truck.security.CurrentUserProvider;
+import com.manager.truck.truck.service.CompanyService;
 import com.manager.truck.truck.service.ContractService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class UpdateContractUseCase {
-    @Autowired
-    private ContractService contractService;
 
-    public ContractResponse execute(Long id, ContractRequest contractRequest){
-        Contract contract = contractBuild(id, contractRequest);
-        contractService.save(contract);
-        return contractResponseBuild(contract);
-    }
+    private final ContractService contractService;
+    private final CompanyService companyService;
+    private final CurrentUserProvider currentUserProvider;
 
-    private ContractResponse contractResponseBuild(Contract contract) {
-        return new ContractResponse(contract);
-    }
-
-    private Contract contractBuild(Long id, ContractRequest contractRequest){
-        Contract contract = contractService.findById(id);
-        contract.setDescription(contractRequest.getDescription());
-        contract.setType(contractRequest.getType());
-        contract.setAmount(contractRequest.getAmount());
-        return contract;
+    @Transactional
+    public ContractResponse execute(Long companyId, Long contractId, ContractUpdateRequest request) {
+        currentUserProvider.requireCompanyAdmin(companyId);
+        companyService.findById(companyId);
+        Contract contract = contractService.findByCompanyIdAndContractId(companyId, contractId);
+        contract.setContractAmount(request.getContractAmount());
+        contract.setContractDate(request.getContractDate());
+        contract.setContractDescription(request.getContractDescription());
+        contract.setContractType(request.getContractType());
+        Contract saved = contractService.save(contract);
+        return ContractResponse.from(saved);
     }
 }

@@ -1,18 +1,25 @@
 package com.manager.truck.truck.usecase.user;
 
-import com.manager.truck.truck.domain.User;
 import com.manager.truck.truck.domain.dto.response.UserResponse;
+import com.manager.truck.truck.exception.ForbiddenOperationException;
+import com.manager.truck.truck.security.CurrentUser;
+import com.manager.truck.truck.security.CurrentUserProvider;
 import com.manager.truck.truck.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class GetUserByIdUseCase {
-    @Autowired
-    private UserService userService;
 
-    public UserResponse execute(Long id){
-        User builduser = userService.findById(id);
-        return new UserResponse(builduser);
+    private final UserService userService;
+    private final CurrentUserProvider currentUserProvider;
+
+    public UserResponse execute(Long userId) {
+        CurrentUser currentUser = currentUserProvider.get();
+        if (!currentUser.userId().equals(userId) && !currentUserProvider.isSuperAdmin()) {
+            throw new ForbiddenOperationException("Solo puede consultar su propia cuenta o ser SUPER_ADMIN");
+        }
+        return UserResponse.from(userService.findById(userId));
     }
 }

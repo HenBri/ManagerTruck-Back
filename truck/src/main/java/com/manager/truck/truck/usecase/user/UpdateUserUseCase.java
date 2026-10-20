@@ -1,36 +1,34 @@
 package com.manager.truck.truck.usecase.user;
 
 import com.manager.truck.truck.domain.User;
-import com.manager.truck.truck.domain.dto.request.UserRequest;
+import com.manager.truck.truck.domain.dto.request.UserUpdateRequest;
 import com.manager.truck.truck.domain.dto.response.UserResponse;
+import com.manager.truck.truck.exception.ForbiddenOperationException;
+import com.manager.truck.truck.security.CurrentUser;
+import com.manager.truck.truck.security.CurrentUserProvider;
 import com.manager.truck.truck.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class UpdateUserUseCase {
-    @Autowired
-    private UserService userService;
 
-    public UserResponse execute(Long id, UserRequest userRequest){
-        User userbuild =userBuild(id, userRequest);
-        userService.update(userbuild);
-        return userResponseBuild(userbuild);
+    private final UserService userService;
+    private final CurrentUserProvider currentUserProvider;
 
-    }
-
-    private User userBuild(Long id, UserRequest userRequest){
-        User user = userService.findById(id);
-
-        user.setName(userRequest.getName());
-        user.setLastname(userRequest.getLastname());
-        user.setEmail(userRequest.getEmail());
-        user.setPhone(userRequest.getPhone());
-        user.setCi(userRequest.getCi());
-        return user;
-    }
-
-    private UserResponse userResponseBuild(User user){
-        return new UserResponse(user);
+    @Transactional
+    public UserResponse execute(Long userId, UserUpdateRequest request) {
+        CurrentUser currentUser = currentUserProvider.get();
+        if (!currentUser.userId().equals(userId) && !currentUserProvider.isSuperAdmin()) {
+            throw new ForbiddenOperationException("Solo puede modificar su propia cuenta o ser SUPER_ADMIN");
+        }
+        User user = userService.findById(userId);
+        user.setUserName(request.getName());
+        user.setUserLastname(request.getLastname());
+        user.setUserCi(request.getCi());
+        user.setUserPhone(request.getPhone());
+        return UserResponse.from(userService.update(user));
     }
 }

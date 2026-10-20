@@ -1,31 +1,49 @@
 package com.manager.truck.truck.service;
 
-import com.manager.truck.truck.domain.Roles;
+import com.manager.truck.truck.domain.Role;
+import com.manager.truck.truck.exception.ResourceNotFoundException;
 import com.manager.truck.truck.repository.RoleRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class RoleServiceImpl implements RoleService{
+@RequiredArgsConstructor
+public class RoleServiceImpl implements RoleService {
 
-    @Autowired
-    private RoleRepository roleRepository;
+    private final RoleRepository roleRepository;
 
-    public Roles save(Roles roles) {
-        return roleRepository.save(roles);
+    @Override
+    public Role save(Role role) {
+        return roleRepository.save(role);
     }
 
-    public Roles findById(Long id) {
-        return roleRepository.getById(id);
+    @Override
+    public Role findById(Integer roleId) {
+        return roleRepository.findById(roleId)
+                .orElseThrow(() -> new ResourceNotFoundException("Rol no encontrado: " + roleId));
     }
 
-    public Roles update(Roles roles) {
-        return roleRepository.save(roles);
+    @Override
+    public Role findByRoleName(String roleName) {
+        return roleRepository.findByRoleName(roleName)
+                .orElseThrow(() -> new ResourceNotFoundException("Rol no encontrado: " + roleName));
     }
 
-    public List<Roles> findAll() {
-        return roleRepository.findAll();
+    @Override
+    public Role update(Role role) {
+        return roleRepository.save(role);
+    }
+
+    @Override
+    public List<Role> findAll() {
+        return roleRepository.findAll(Sort.by(Sort.Direction.ASC, "roleId"));
+    }
+
+    @Override
+    public boolean existsByRoleName(String roleName) {
+        return roleRepository.existsByRoleName(roleName);
     }
 }

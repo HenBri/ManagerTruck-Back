@@ -1,7 +1,5 @@
 package com.manager.truck.truck.domain.dto.response;
 
-import com.manager.truck.truck.constant.ResponseConstant;
-import com.manager.truck.truck.domain.Charge;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,11 +7,21 @@ import java.util.List;
 
 @Getter
 @Setter
-public class ChargesResponse extends CommonResponse{
-    private List<Charge> charges;
+public class ChargesResponse extends CommonResponse {
 
-    public ChargesResponse(List<Charge> charges) {
-        super(ResponseConstant.StatusCodeResponse.SUCCESS_CODE, ResponseConstant.StatusCodeResponse.SUCCESS_MSG);
+    private List<ChargeResponse> charges;
+    private int page;
+    private int size;
+    private long totalElements;
+    private int totalPages;
+
+    public ChargesResponse(List<ChargeResponse> charges, int page, int size,
+                           long totalElements, int totalPages) {
+        super(StatusCodeResponse.SUCCESS_CODE, StatusCodeResponse.SUCCESS_MSG);
         this.charges = charges;
+        this.page = page;
+        this.size = size;
+        this.totalElements = totalElements;
+        this.totalPages = totalPages;
     }
 }

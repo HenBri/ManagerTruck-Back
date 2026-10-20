@@ -1,0 +1,172 @@
+// Gestion de acceso al SaaS:
+// SUPER_ADMIN es global (platform_user_role). No requiere empresa.
+// SECRETARY, PARTNER, DRIVER pertenecen a una empresa (company_user_role).
+// Un socio puede ser chofer y tener ambos perfiles y ambos roles.
+// Los auxiliares externos no tienen obligatoriamente usuarios.
+
+// SaaS transporte pesado: cada viaje A-B tiene un camion y conductor; no hay tramos.
+// company_id indica el tenant, no la propiedad del camion.
+// Claves compuestas en Ref protegen la pertenencia multiempresa.
+
+Table company {
+ company_id bigint [pk, increment]
+ company_name varchar(150) [not null]
+ company_nit varchar(30)
+ company_status varchar(20) [not null]
+}
+Table user_table {
+ user_id bigint [pk, increment]
+ user_email varchar(255) [not null, unique]
+ password_hash varchar(255) [not null]
+ user_name varchar(100) [not null]
+}
+Table role_table {
+ role_id int [pk, increment]
+ role_name varchar(50) [not null, unique, note: 'SUPER_ADMIN, SECRETARY, PARTNER, DRIVER']
+ role_scope varchar(20) [not null, note: 'PLATFORM o COMPANY']
+ indexes { (role_id, role_scope) [unique] }
+}
+Table platform_user_role {
+ user_id bigint [not null, note: 'SUPER_ADMIN puede administrar toda la plataforma']
+ role_id int [not null]
+ role_scope varchar(20) [not null, default: 'PLATFORM']
+ indexes { (user_id, role_id) [pk] }
+}
+Table company_user {
+ company_id bigint [not null]
+ user_id bigint [not null]
+ membership_status varchar(20) [not null]
+ indexes { (company_id, user_id) [pk] }
+}
+Table company_user_role {
+ company_id bigint [not null]
+ user_id bigint [not null]
+ role_id int [not null]
+ role_scope varchar(20) [not null, default: 'COMPANY']
+ indexes { (company_id, user_id, role_id) [pk] }
+}
+Table client {
+ client_id bigint [pk, increment]
+ company_id bigint [not null]
+ client_name varchar(150) [not null]
+ indexes { (company_id, client_id) [unique] }
+}
+Table contract_table {
+ contract_id bigint [pk, increment]
+ company_id bigint [not null]
+ client_id bigint [not null]
+ contract_amount decimal(15,2) [not null]
+ contract_date date [not null]
+ indexes { (company_id, contract_id) [unique] }
+}
+Table charge_table {
+ charge_id bigint [pk, increment]
+ company_id bigint [not null]
+ contract_id bigint [not null]
+ charge_description varchar(255)
+ indexes { (company_id, charge_id) [unique] }
+}
+Table container_table {
+ container_id bigint [pk, increment]
+ company_id bigint [not null]
+ charge_id bigint [not null]
+ container_code varchar(30) [not null]
+ container_weight decimal(12,3)
+ indexes { (company_id, container_id) [unique] }
+}
+Table partner_table {
+ partner_id bigint [pk, increment]
+ company_id bigint [not null]
+ user_id bigint [note: 'Cuenta de socio opcional']
+ partner_type varchar(20) [not null, note: 'PERSON o BUSINESS']
+ partner_name varchar(150) [not null]
+ indexes { (company_id, partner_id) [unique] }
+}
+Table driver_table {
+ driver_id bigint [pk, increment]
+ company_id bigint [not null]
+ user_id bigint [note: 'Cuenta de conductor opcional']
+ person_partner_id bigint [note: 'El conductor es la MISMA persona que este socio; NULL en otro caso']
+ driver_name varchar(150) [not null]
+ driver_license varchar(40) [not null]
+ indexes {
+  (company_id, driver_id) [unique]
+  (company_id, person_partner_id) [unique]
+ }
+}
+Table truck_table {
+ truck_id bigint [pk, increment]
+ company_id bigint [not null, note: 'Empresa gestora / tenant, no propietaria']
+ owner_partner_id bigint [not null, note: 'El propietario es SIEMPRE un socio']
+ truck_board varchar(20) [not null]
+ truck_capacity decimal(12,3)
+ indexes { (company_id, truck_id) [unique] }
+}
+Table truck_driver_assignment {
+ assignment_id bigint [pk, increment]
+ company_id bigint [not null]
+ truck_id bigint [not null]
+ driver_id bigint [not null]
+ assigned_from datetime [not null]
+ assigned_until datetime
+ indexes { (company_id, assignment_id) [unique] }
+}
+Table journey_table {
+ journey_id bigint [pk, increment]
+ company_id bigint [not null]
+ container_id bigint [not null]
+ journey_origin varchar(255) [not null]
+ journey_destination varchar(255) [not null]
+ journey_start_date datetime
+ journey_end_date datetime
+ journey_state varchar(20) [not null]
+ execution_type varchar(20) [not null, note: 'PARTNER o AUXILIARY, exclusivo']
+ assignment_id bigint [note: 'Solo para camion y conductor de socio']
+ auxiliary_provider_id bigint [note: 'Solo para auxilio externo']
+ auxiliary_truck_plate varchar(20)
+ auxiliary_driver_name varchar(150)
+ auxiliary_driver_license varchar(40)
+ auxiliary_reason varchar(30)
+ agreed_amount decimal(15,2)
+ indexes { (company_id, journey_id) [unique] }
+}
+
+Table auxiliary_provider {
+ provider_id bigint [pk, increment]
+ company_id bigint [not null]
+ provider_kind varchar(20) [not null, note: 'BUSINESS o INDEPENDENT']
+ provider_name varchar(150) [not null]
+ provider_document varchar(30)
+ provider_phone varchar(25)
+ provider_email varchar(255)
+ provider_status varchar(20) [not null]
+ indexes { (company_id, provider_id) [unique] }
+}
+
+
+Ref: company_user.company_id > company.company_id
+Ref: company_user.user_id > user_table.user_id
+Ref: company_user_role.(company_id,user_id) > company_user.(company_id,user_id)
+Ref: company_user_role.(role_id,role_scope) > role_table.(role_id,role_scope)
+Ref: platform_user_role.user_id > user_table.user_id
+Ref: platform_user_role.(role_id,role_scope) > role_table.(role_id,role_scope)
+Ref: client.company_id > company.company_id
+Ref: contract_table.(company_id,client_id) > client.(company_id,client_id)
+Ref: charge_table.(company_id,contract_id) > contract_table.(company_id,contract_id)
+Ref: container_table.(company_id,charge_id) > charge_table.(company_id,charge_id)
+Ref: partner_table.company_id > company.company_id
+Ref: partner_table.(company_id,user_id) > company_user.(company_id,user_id)
+Ref: driver_table.company_id > company.company_id
+Ref: driver_table.(company_id,user_id) > company_user.(company_id,user_id)
+Ref: driver_table.(company_id,person_partner_id) > partner_table.(company_id,partner_id)
+Ref: truck_table.(company_id,owner_partner_id) > partner_table.(company_id,partner_id)
+Ref: truck_driver_assignment.(company_id,truck_id) > truck_table.(company_id,truck_id)
+Ref: truck_driver_assignment.(company_id,driver_id) > driver_table.(company_id,driver_id)
+Ref: journey_table.(company_id,container_id) > container_table.(company_id,container_id)
+Ref: auxiliary_provider.company_id > company.company_id
+Ref: journey_table.(company_id,assignment_id) > truck_driver_assignment.(company_id,assignment_id)
+Ref: journey_table.(company_id,auxiliary_provider_id) > auxiliary_provider.(company_id,provider_id)
+
+// CHECK asegura: PARTNER requiere assignment_id, AUXILIARY requiere
+// auxiliary_provider_id + identificacion de camion/conductor externos.
+// Un viaje tiene UN origen y UN destino y no se subdivide en tramos.

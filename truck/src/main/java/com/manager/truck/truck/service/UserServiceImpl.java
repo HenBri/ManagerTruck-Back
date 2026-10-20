@@ -1,25 +1,25 @@
 package com.manager.truck.truck.service;
 
 import com.manager.truck.truck.domain.User;
-import com.manager.truck.truck.domain.dto.request.UserRequest;
+import com.manager.truck.truck.exception.ResourceNotFoundException;
 import com.manager.truck.truck.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
-public class UserServiceImpl implements UserService{
-    @Autowired
-    UserRepository userRepository;
+@RequiredArgsConstructor
+public class UserServiceImpl implements UserService {
 
-    public User save(User user){
-        return userRepository.save(user);
-    }
+    private final UserRepository userRepository;
 
     @Override
-    public User findById(Long id) {
-        return userRepository.getById(id);
+    public User save(User user) {
+        return userRepository.save(user);
     }
 
     @Override
@@ -28,8 +28,48 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public List<User> findAll() {
-        return userRepository.findAll();
+    public User findById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado: " + userId));
     }
 
+    @Override
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByUserEmail(email);
+    }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByUserEmail(email);
+    }
+
+    @Override
+    public Page<User> findAll(Pageable pageable) {
+        return userRepository.findAll(pageable);
+    }
+
+    @Override
+    public List<String> findPlatformRoleNames(Long userId) {
+        return userRepository.findPlatformRoleNames(userId);
+    }
+
+    @Override
+    public List<String> findAllCompanyRoleNames(Long userId) {
+        return userRepository.findAllCompanyRoleNames(userId);
+    }
+
+    @Override
+    public List<String> findCompanyRoleNames(Long userId, Long companyId) {
+        return userRepository.findCompanyRoleNames(userId, companyId);
+    }
+
+    @Override
+    public boolean isActiveMember(Long userId, Long companyId) {
+        return userRepository.countActiveMembership(userId, companyId) > 0;
+    }
+
+    @Override
+    public Page<User> findCompanyMembers(Long companyId, Pageable pageable) {
+        return userRepository.findCompanyMembers(companyId, pageable);
+    }
 }

@@ -3,39 +3,38 @@ package com.manager.truck.truck.usecase.client;
 import com.manager.truck.truck.domain.Client;
 import com.manager.truck.truck.domain.dto.request.ClientRequest;
 import com.manager.truck.truck.domain.dto.response.ClientResponse;
-import com.manager.truck.truck.repository.ClientRepository;
+import com.manager.truck.truck.domain.enums.CompanyStatus;
+import com.manager.truck.truck.exception.ConflictException;
+import com.manager.truck.truck.security.CurrentUserProvider;
 import com.manager.truck.truck.service.ClientService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.manager.truck.truck.service.CompanyService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class SaveClientUseCase {
-    @Autowired
-    private ClientService clientService;
 
-    public ClientResponse execute(ClientRequest clientRequest) {
-        Client client = buildClient(clientRequest);
+    private final ClientService clientService;
+    private final CompanyService companyService;
+    private final CurrentUserProvider currentUserProvider;
 
-        clientService.save(client);
-
-
-        return buildClientResponse(client);
-    }
-
-    public Client buildClient(ClientRequest clientRequest){
+    @Transactional
+    public ClientResponse execute(Long companyId, ClientRequest request) {
+        currentUserProvider.requireCompanyAdmin(companyId);
+        if (companyService.findById(companyId).getCompanyStatus() != CompanyStatus.ACTIVE) {
+            throw new ConflictException("No se pueden crear clientes en una empresa inactiva");
+        }
         Client client = new Client();
-        client.setName(clientRequest.getName());
-        client.setPhone(clientRequest.getPhone());
-        client.setEmail(clientRequest.getEmail());
-        client.setAddress(clientRequest.getAddress());
-
-        return client;
+        client.setCompanyId(companyId);
+        client.setClientName(request.getClientName().trim());
+        client.setClientCi(request.getClientCi());
+        client.setClientEmail(request.getClientEmail());
+        client.setClientPhone(request.getClientPhone());
+        client.setClientAddress(request.getClientAddress());
+        client.setClientState(Boolean.TRUE);
+        Client saved = clientService.save(client);
+        return ClientResponse.from(saved);
     }
-
-    public ClientResponse buildClientResponse(Client client){
-        return new ClientResponse(client);
-    }
-
-
-
 }

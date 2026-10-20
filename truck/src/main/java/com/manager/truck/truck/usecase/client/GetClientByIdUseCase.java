@@ -2,23 +2,24 @@ package com.manager.truck.truck.usecase.client;
 
 import com.manager.truck.truck.domain.Client;
 import com.manager.truck.truck.domain.dto.response.ClientResponse;
-import com.manager.truck.truck.repository.ClientRepository;
+import com.manager.truck.truck.security.CurrentUserProvider;
 import com.manager.truck.truck.service.ClientService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.manager.truck.truck.service.CompanyService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
+@RequiredArgsConstructor
 public class GetClientByIdUseCase {
-    @Autowired
-    private ClientService clientService;
 
-    public ClientResponse execute(Long id) {
-        Client client =  clientService.GetById(id) ;
-        return buildClientResponse(client);
-    }
-    public ClientResponse buildClientResponse(Client client){
-        return new ClientResponse(client);
+    private final ClientService clientService;
+    private final CompanyService companyService;
+    private final CurrentUserProvider currentUserProvider;
+
+    public ClientResponse execute(Long companyId, Long clientId) {
+        currentUserProvider.requireCompanyAdmin(companyId);
+        companyService.findById(companyId);
+        Client client = clientService.findByCompanyIdAndClientId(companyId, clientId);
+        return ClientResponse.from(client);
     }
 }

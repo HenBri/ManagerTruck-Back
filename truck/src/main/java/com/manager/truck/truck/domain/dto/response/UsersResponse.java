@@ -1,6 +1,5 @@
 package com.manager.truck.truck.domain.dto.response;
 
-import com.manager.truck.truck.domain.User;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,10 +8,19 @@ import java.util.List;
 @Getter
 @Setter
 public class UsersResponse extends CommonResponse {
-    List<User> users;
 
-    public UsersResponse(List<User> users){
-        super(StatusCodeResponse.SUCCESS_CODE,StatusCodeResponse.SUCCESS_MSG);
+    private List<UserResponse> users;
+    private int page;
+    private int size;
+    private long totalElements;
+    private int totalPages;
+
+    public UsersResponse(List<UserResponse> users, int page, int size, long totalElements, int totalPages) {
+        super(StatusCodeResponse.SUCCESS_CODE, StatusCodeResponse.SUCCESS_MSG);
         this.users = users;
+        this.page = page;
+        this.size = size;
+        this.totalElements = totalElements;
+        this.totalPages = totalPages;
     }
 }

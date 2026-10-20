@@ -1,38 +1,34 @@
 package com.manager.truck.truck.usecase.client;
 
 import com.manager.truck.truck.domain.Client;
-import com.manager.truck.truck.domain.dto.request.ClientRequest;
+import com.manager.truck.truck.domain.dto.request.ClientUpdateRequest;
 import com.manager.truck.truck.domain.dto.response.ClientResponse;
-import com.manager.truck.truck.repository.ClientRepository;
+import com.manager.truck.truck.security.CurrentUserProvider;
 import com.manager.truck.truck.service.ClientService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.manager.truck.truck.service.CompanyService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class UpdateClientUseCase {
-    @Autowired
-    private ClientService clientService;
 
-    public ClientResponse execute(Long id, ClientRequest clientRequest) {
-        Client client = buildClient(clientRequest, id);
-        clientService.save(client);
-        return  buildClientResponse(client);
-    }
+    private final ClientService clientService;
+    private final CompanyService companyService;
+    private final CurrentUserProvider currentUserProvider;
 
-    public Client buildClient(ClientRequest clientRequest, Long id){
-        Client client = clientService.GetById(id);
-
-        client.setName(clientRequest.getName());
-        client.setPhone(clientRequest.getPhone());
-        client.setEmail(clientRequest.getEmail());
-        client.setAddress(clientRequest.getAddress());
-
-        return client;
-    }
-
-    public ClientResponse buildClientResponse(Client client){
-        return new ClientResponse(client);
+    @Transactional
+    public ClientResponse execute(Long companyId, Long clientId, ClientUpdateRequest request) {
+        currentUserProvider.requireCompanyAdmin(companyId);
+        companyService.findById(companyId);
+        Client client = clientService.findByCompanyIdAndClientId(companyId, clientId);
+        client.setClientName(request.getClientName().trim());
+        client.setClientCi(request.getClientCi());
+        client.setClientEmail(request.getClientEmail());
+        client.setClientPhone(request.getClientPhone());
+        client.setClientAddress(request.getClientAddress());
+        Client saved = clientService.save(client);
+        return ClientResponse.from(saved);
     }
 }

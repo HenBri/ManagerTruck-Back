@@ -1,16 +1,25 @@
 package com.manager.truck.truck.usecase.charge;
 
+import com.manager.truck.truck.domain.Charge;
 import com.manager.truck.truck.domain.dto.response.ChargeResponse;
+import com.manager.truck.truck.security.CurrentUserProvider;
 import com.manager.truck.truck.service.ChargeService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.manager.truck.truck.service.CompanyService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class GetChargeByIdUseCase {
-    @Autowired
-    private ChargeService chargeService;
 
-    public ChargeResponse execute(Long id){
-        return new ChargeResponse(chargeService.getById(id));
+    private final ChargeService chargeService;
+    private final CompanyService companyService;
+    private final CurrentUserProvider currentUserProvider;
+
+    public ChargeResponse execute(Long companyId, Long chargeId) {
+        currentUserProvider.requireCompanyAdmin(companyId);
+        companyService.findById(companyId);
+        Charge charge = chargeService.findByCompanyIdAndChargeId(companyId, chargeId);
+        return ChargeResponse.from(charge);
     }
 }

@@ -1,0 +1,29 @@
+package com.manager.truck.truck.domain.dto.request;
+
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.math.BigDecimal;
+
+@Getter
+@Setter
+public class ContainerUpdateRequest {
+
+    @NotBlank
+    @Size(max = 30)
+    private String containerCode;
+
+    @DecimalMin(value = "0")
+    @Digits(integer = 9, fraction = 3)
+    private BigDecimal containerWeight;
+
+    @Size(max = 255)
+    private String containerDescription;
+
+    @Size(max = 50)
+    private String containerType;
+}

@@ -1,45 +1,46 @@
 package com.manager.truck.truck.domain;
 
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.persistence.*;
+import com.manager.truck.truck.domain.enums.ChargeState;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @Entity
 @Table(name = Constants.ChargeTable.NAME)
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Charge {
+
     @Id
+    @Column(name = Constants.ChargeTable.Id.NAME, nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = Constants.ChargeTable.Id.NAME)
-    private Long id;
+    private Long chargeId;
+
+    @Column(name = Constants.ChargeTable.CompanyId.NAME, nullable = false)
+    private Long companyId;
+
+    @Column(name = Constants.ChargeTable.ContractId.NAME, nullable = false)
+    private Long contractId;
+
     @Column(name = Constants.ChargeTable.Description.NAME, length = Constants.ChargeTable.Description.LENGTH)
-    private String Description;
-    @Column(name = Constants.ChargeTable.Date.NAME)
-    private Date date;
-    @Column(name = Constants.ChargeTable.Type.NAME)
-    private String type;
-    @Column(name = Constants.ChargeTable.State.NAME)
-    private Boolean state;
+    private String chargeDescription;
 
-    @ManyToOne
-    @JoinColumn(name = Constants.ChargeTable.Client.NAME, referencedColumnName = Constants.ClientTable.Id.NAME)
-    private Client client;
+    @Column(name = Constants.ChargeTable.Date.NAME, insertable = false, updatable = false)
+    private LocalDateTime chargeDate;
 
-    @ManyToOne
-    @JoinColumn(name = Constants.ChargeTable.Contract.NAME, referencedColumnName = Constants.ContractTable.Id.NAME, nullable = true)
-    private Contract contract;
+    @Column(name = Constants.ChargeTable.Type.NAME, length = Constants.ChargeTable.Type.LENGTH)
+    private String chargeType;
 
-    @PrePersist
-    void prePersist(){
-        this.date = new Date();
-        this.state = true;
-    }
-
-
+    @Enumerated(EnumType.STRING)
+    @Column(name = Constants.ChargeTable.State.NAME, nullable = false)
+    private ChargeState chargeState;
 }

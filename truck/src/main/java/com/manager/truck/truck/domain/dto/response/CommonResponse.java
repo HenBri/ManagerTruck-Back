@@ -11,4 +11,8 @@ import lombok.Setter;
 public class CommonResponse extends ResponseConstant {
     private String code;
     private String message;
+
+    public CommonResponse() {
+        super();
+    }
 }

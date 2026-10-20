@@ -1,13 +1,16 @@
 package com.manager.truck.truck.service;
 
 import com.manager.truck.truck.domain.Company;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface CompanyService {
+
     Company save(Company company);
-    Company findById(Long id);
+
+    Company findById(Long companyId);
+
     Company update(Company company);
-    void delete(Long id);
-    List<Company> findAll();
+
+    Page<Company> findAll(Pageable pageable);
 }

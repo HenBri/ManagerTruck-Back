@@ -1,18 +1,18 @@
 package com.manager.truck.truck.service;
 
 import com.manager.truck.truck.domain.Company;
+import com.manager.truck.truck.exception.ResourceNotFoundException;
 import com.manager.truck.truck.repository.CompanyRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
-public class CompanyServiceImpl implements CompanyService{
+@RequiredArgsConstructor
+public class CompanyServiceImpl implements CompanyService {
 
-    @Autowired
-    private CompanyRepository companyRepository;
-
+    private final CompanyRepository companyRepository;
 
     @Override
     public Company save(Company company) {
@@ -20,8 +20,9 @@ public class CompanyServiceImpl implements CompanyService{
     }
 
     @Override
-    public Company findById(Long id) {
-        return companyRepository.getById(id);
+    public Company findById(Long companyId) {
+        return companyRepository.findById(companyId)
+                .orElseThrow(() -> new ResourceNotFoundException("Empresa no encontrada: " + companyId));
     }
 
     @Override
@@ -30,11 +31,7 @@ public class CompanyServiceImpl implements CompanyService{
     }
 
     @Override
-    public void delete(Long id) {
-    }
-
-    @Override
-    public List<Company> findAll() {
-        return companyRepository.findAll();
+    public Page<Company> findAll(Pageable pageable) {
+        return companyRepository.findAll(pageable);
     }
 }

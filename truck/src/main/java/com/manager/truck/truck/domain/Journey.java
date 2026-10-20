@@ -1,66 +1,96 @@
 package com.manager.truck.truck.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.manager.truck.truck.domain.enums.AuxiliaryReason;
+import com.manager.truck.truck.domain.enums.JourneyExecutionType;
+import com.manager.truck.truck.domain.enums.JourneyState;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.*;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
-@Entity
 @Getter
 @Setter
+@Entity
 @Table(name = Constants.JourneyTable.NAME)
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Journey {
+
     @Id
+    @Column(name = Constants.JourneyTable.Id.NAME, nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = Constants.JourneyTable.Id.NAME)
-    private Long id;
-    @Column(name = Constants.JourneyTable.Description.NAME, length = Constants.JourneyTable.Description.LENGTH)
-    private String description;
-    @Column(name = Constants.JourneyTable.Origin.NAME, length = Constants.JourneyTable.Origin.LENGTH)
-    private String origin;
-    @Column(name = Constants.JourneyTable.Destination.NAME, length = Constants.JourneyTable.Destination.LENGTH)
-    private String destination;
-    @Column(name = Constants.JourneyTable.DateStart.NAME)
-    @Temporal(TemporalType.DATE)
-    private Date dateStart;
-    @Column(name = Constants.JourneyTable.DateEnd.NAME)
-    @Temporal(TemporalType.DATE)
-    private Date dateEnd;
-    @Column(name = Constants.JourneyTable.StateJourney.NAME)
-    private String stateJourney;
-    @Column(name = Constants.JourneyTable.State.NAME)
-    private Boolean state;
-    @Column(name = Constants.JourneyTable.Type.NAME, length = Constants.JourneyTable.Type.LENGTH)
-    private String type;
+    private Long journeyId;
 
-    @OneToOne
-    @JoinColumn(name = Constants.JourneyTable.Container.NAME, referencedColumnName = Constants.Container.Id.NAME)
-    private Container container;
+    @Column(name = Constants.JourneyTable.CompanyId.NAME, nullable = false)
+    private Long companyId;
 
+    @Column(name = Constants.JourneyTable.ContainerId.NAME, nullable = false)
+    private Long containerId;
 
-    @ManyToOne
-    @JoinColumn(name = Constants.JourneyTable.Truck.NAME, referencedColumnName = Constants.TruckTable.Id.NAME)
-    private Truck truck;
+    @Column(name = Constants.JourneyTable.Origin.NAME,
+            length = Constants.JourneyTable.Origin.LENGTH, nullable = false)
+    private String journeyOrigin;
 
-    @ManyToOne
-    @JoinColumn(name = Constants.JourneyTable.Contract.NAME, referencedColumnName = Constants.ContractTable.Id.NAME)
-    private Contract contract;
+    @Column(name = Constants.JourneyTable.Destination.NAME,
+            length = Constants.JourneyTable.Destination.LENGTH, nullable = false)
+    private String journeyDestination;
 
-    @ManyToOne
-    @JoinColumn(name = Constants.JourneyTable.User.NAME, referencedColumnName = Constants.UserTable.Id.NAME)
-    private User user;
+    @Column(name = Constants.JourneyTable.StartDate.NAME)
+    private LocalDateTime journeyStartDate;
 
+    @Column(name = Constants.JourneyTable.EndDate.NAME)
+    private LocalDateTime journeyEndDate;
 
+    @Column(name = Constants.JourneyTable.Description.NAME,
+            length = Constants.JourneyTable.Description.LENGTH)
+    private String journeyDescription;
 
+    @Column(name = Constants.JourneyTable.Type.NAME,
+            length = Constants.JourneyTable.Type.LENGTH)
+    private String journeyType;
 
-    @PrePersist
-    void prePersist(){
-        this.state = true;
-        this.dateStart = new Date();
-    }
+    @Enumerated(EnumType.STRING)
+    @Column(name = Constants.JourneyTable.State.NAME, nullable = false)
+    private JourneyState journeyState;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = Constants.JourneyTable.ExecutionType.NAME, nullable = false)
+    private JourneyExecutionType executionType;
+
+    @Column(name = Constants.JourneyTable.AssignmentId.NAME)
+    private Long assignmentId;
+
+    @Column(name = Constants.JourneyTable.AuxiliaryProviderId.NAME)
+    private Long auxiliaryProviderId;
+
+    @Column(name = Constants.JourneyTable.AuxiliaryTruckPlate.NAME,
+            length = Constants.JourneyTable.AuxiliaryTruckPlate.LENGTH)
+    private String auxiliaryTruckPlate;
+
+    @Column(name = Constants.JourneyTable.AuxiliaryDriverName.NAME,
+            length = Constants.JourneyTable.AuxiliaryDriverName.LENGTH)
+    private String auxiliaryDriverName;
+
+    @Column(name = Constants.JourneyTable.AuxiliaryDriverLicense.NAME,
+            length = Constants.JourneyTable.AuxiliaryDriverLicense.LENGTH)
+    private String auxiliaryDriverLicense;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = Constants.JourneyTable.AuxiliaryReason.NAME)
+    private AuxiliaryReason auxiliaryReason;
+
+    @Column(name = Constants.JourneyTable.AgreedAmount.NAME,
+            precision = Constants.JourneyTable.AgreedAmount.PRECISION,
+            scale = Constants.JourneyTable.AgreedAmount.SCALE)
+    private BigDecimal agreedAmount;
+
+    @Column(name = Constants.JourneyTable.CreatedAt.NAME, insertable = false, updatable = false)
+    private LocalDateTime createdAt;
 }

@@ -1,45 +1,91 @@
 package com.manager.truck.truck.controller;
 
 import com.manager.truck.truck.domain.dto.request.ContainerRequest;
+import com.manager.truck.truck.domain.dto.request.ContainerStatusRequest;
+import com.manager.truck.truck.domain.dto.request.ContainerUpdateRequest;
 import com.manager.truck.truck.domain.dto.response.ContainerResponse;
 import com.manager.truck.truck.domain.dto.response.ContainersResponse;
-import com.manager.truck.truck.usecase.container.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import com.manager.truck.truck.domain.enums.ContainerState;
+import com.manager.truck.truck.usecase.container.GetAllContainersUseCase;
+import com.manager.truck.truck.usecase.container.GetContainerByIdUseCase;
+import com.manager.truck.truck.usecase.container.SaveContainerUseCase;
+import com.manager.truck.truck.usecase.container.UpdateContainerStatusUseCase;
+import com.manager.truck.truck.usecase.container.UpdateContainerUseCase;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/api/companies/{companyId}/containers")
+@RequiredArgsConstructor
+@Tag(name = "Containers", description = "Contenedores de una carga; código único por empresa. "
+        + "Solo SUPER_ADMIN y SECRETARY administran (PARTNER/DRIVER sin acceso)")
 public class ContainerController {
-    @Autowired
-    private SaveContainerUseCase saveContainerUseCase;
-    @Autowired
-    private UpdateContainerUseCase updateContainerUseCase;
-    @Autowired
-    private GetAllContainerUseCase getAllContainerUseCase;
-    @Autowired
-    private GetContainerByIdUseCase getContainerByIdUseCase;
-    @Autowired
-    private DeleteContainerByUseCase deleteContainerUseCase;
 
+    private final GetAllContainersUseCase getAllContainersUseCase;
+    private final GetContainerByIdUseCase getContainerByIdUseCase;
+    private final SaveContainerUseCase saveContainerUseCase;
+    private final UpdateContainerUseCase updateContainerUseCase;
+    private final UpdateContainerStatusUseCase updateContainerStatusUseCase;
 
-    @PostMapping("saveContainer/{chargeId}")
-    public ContainerResponse save(@RequestBody ContainerRequest containerRequest,@PathVariable Long chargeId){
-        return saveContainerUseCase.execute(containerRequest, chargeId);
+    @GetMapping
+    @Operation(summary = "Lista los contenedores de una empresa con filtros opcionales por carga y estado")
+    public ContainersResponse getAll(
+            @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
+            @Parameter(description = "Filtra por carga dueña del contenedor") @RequestParam(required = false) Long chargeId,
+            @Parameter(description = "Filtra por estado del contenedor") @RequestParam(required = false) ContainerState state,
+            @PageableDefault(size = 20, sort = "containerId") Pageable pageable) {
+        return getAllContainersUseCase.execute(companyId, chargeId, state, pageable);
     }
-    @GetMapping("getAllContainer")
-    public ContainersResponse getAll(){
-        return getAllContainerUseCase.execute();
+
+    @GetMapping("/{containerId}")
+    @Operation(summary = "Consulta un contenedor por id dentro de la empresa")
+    public ContainerResponse getById(
+            @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
+            @Parameter(description = "Identificador del contenedor") @PathVariable Long containerId) {
+        return getContainerByIdUseCase.execute(companyId, containerId);
     }
-    @GetMapping("getContainerById/{id}")
-    public ContainerResponse getContainerById(@PathVariable Long id){
-        return getContainerByIdUseCase.execute(id);
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "Crea un contenedor para una carga no cancelada de la empresa "
+            + "(SUPER_ADMIN o SECRETARY); el código debe ser único por empresa")
+    public ContainerResponse create(
+            @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
+            @Valid @RequestBody ContainerRequest request) {
+        return saveContainerUseCase.execute(companyId, request);
     }
-    @PutMapping("updateContainer/{id}")
-    public ContainerResponse update(@PathVariable Long id, @RequestBody ContainerRequest containerRequest){
-        return updateContainerUseCase.execute(id, containerRequest);
+
+    @PutMapping("/{containerId}")
+    @Operation(summary = "Actualiza los datos escalares de un contenedor sin cambiar carga ni estado")
+    public ContainerResponse update(
+            @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
+            @Parameter(description = "Identificador del contenedor") @PathVariable Long containerId,
+            @Valid @RequestBody ContainerUpdateRequest request) {
+        return updateContainerUseCase.execute(companyId, containerId, request);
     }
-    @DeleteMapping("deleteContainer/{id}")
-    public void delete(@PathVariable Long id){
-        deleteContainerUseCase.execute(id);
+
+    @PutMapping("/{containerId}/status")
+    @Operation(summary = "Cambia el estado del contenedor con transiciones estrictas "
+            + "(AVAILABLE→LOADED→IN_TRANSIT→DELIVERED)")
+    public ContainerResponse updateStatus(
+            @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
+            @Parameter(description = "Identificador del contenedor") @PathVariable Long containerId,
+            @Valid @RequestBody ContainerStatusRequest request) {
+        return updateContainerStatusUseCase.execute(companyId, containerId, request);
     }
 }
