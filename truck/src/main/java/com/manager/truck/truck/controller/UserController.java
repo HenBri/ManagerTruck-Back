@@ -54,6 +54,13 @@ public class UserController {
         return registerUserUseCase.execute(request);
     }
 
+    @PostMapping("/admin")
+    @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "Crea una cuenta desde el panel de plataforma (solo SUPER_ADMIN; sin roles ni empresas)")
+    public UserResponse registerByPlatformAdmin(@Valid @RequestBody UserRegisterRequest request) {
+        return registerUserUseCase.execute(request);
+    }
+
     @GetMapping("/me")
     @Operation(summary = "Devuelve la cuenta autenticada")
     public UserResponse getCurrentUser() {

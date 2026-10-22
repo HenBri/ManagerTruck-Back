@@ -60,8 +60,8 @@ public class DriverController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Crea un conductor en la empresa (SUPER_ADMIN o SECRETARY de esa empresa); "
-            + "valida licencia, duplicidad de cuenta y vínculo socio-persona")
+    @Operation(summary = "Crea un conductor con cuenta, membresía y rol DRIVER "
+            + "(SUPER_ADMIN o SECRETARY de esa empresa); valida licencia y vínculo socio-persona")
     public DriverResponse create(
             @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
             @Valid @RequestBody DriverRequest request) {

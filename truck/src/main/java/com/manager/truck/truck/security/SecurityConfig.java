@@ -104,6 +104,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/companies/*/status").hasRole(SecurityRoles.SUPER_ADMIN)
                         .requestMatchers(HttpMethod.PUT, "/api/companies/*").hasRole(SecurityRoles.SUPER_ADMIN)
                         .requestMatchers(HttpMethod.GET, "/api/users").hasRole(SecurityRoles.SUPER_ADMIN)
+                        .requestMatchers(HttpMethod.POST, "/api/users/admin").hasRole(SecurityRoles.SUPER_ADMIN)
                         .requestMatchers(HttpMethod.PUT, "/api/users/*/status").hasRole(SecurityRoles.SUPER_ADMIN)
                         .requestMatchers(HttpMethod.POST, "/api/roles").hasRole(SecurityRoles.SUPER_ADMIN)
                         .requestMatchers(HttpMethod.PUT, "/api/roles/*").hasRole(SecurityRoles.SUPER_ADMIN)

@@ -135,6 +135,34 @@ class SecurityAccessControlTest {
     }
 
     @Test
+    void crearCuentaDesdePanelSinAutenticacionDeberiaDevolver401() throws Exception {
+        mockMvc.perform(post("/api/users/admin")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\":\"nuevo@mail.com\",\"password\":\"secreta123\",\"name\":\"Nuevo\",\"lastname\":\"Usuario\"}"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void crearCuentaDesdePanelComoSecretaryDeberiaDevolver403() throws Exception {
+        mockMvc.perform(post("/api/users/admin")
+                        .with(withRole("SECRETARY"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\":\"nuevo@mail.com\",\"password\":\"secreta123\",\"name\":\"Nuevo\",\"lastname\":\"Usuario\"}"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void crearCuentaDesdePanelComoSuperAdminDeberiaDevolver201() throws Exception {
+        when(registerUserUseCase.execute(any(UserRegisterRequest.class))).thenReturn(new UserResponse());
+
+        mockMvc.perform(post("/api/users/admin")
+                        .with(withRole("SUPER_ADMIN"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\":\"nuevo@mail.com\",\"password\":\"secreta123\",\"name\":\"Nuevo\",\"lastname\":\"Usuario\"}"))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
     void listarUsuariosSinAutenticacionDeberiaDevolver401() throws Exception {
         mockMvc.perform(get("/api/users"))
                 .andExpect(status().isUnauthorized());

@@ -8,7 +8,7 @@
 
 ## Objetivo de negocio
 
-Registra a los **socios propietarios de camiones** de una empresa de transporte. La empresa **no** es propietaria de camiones: todo camión habitual debe apuntar a un socio de esta tabla. Un socio puede ser persona física (`PERSON`) o negocio (`BUSINESS`), puede ser propietario de múltiples camiones y **puede ser simultáneamente conductor** (`driver_table.person_partner_id`). La **cuenta de acceso es opcional** (`user_id NULL`): Partner es un **perfil del negocio**, no una cuenta de usuario independiente. Los auxilios externos (fase 6) **no** se registran aquí.
+Registra a los **socios propietarios de camiones** de una empresa de transporte. La empresa **no** es propietaria de camiones: todo camión habitual debe apuntar a un socio de esta tabla. Un socio puede ser persona física (`PERSON`) o negocio (`BUSINESS`), puede ser propietario de múltiples camiones y **puede ser simultáneamente conductor** (`driver_table.person_partner_id`). Al crear un socio `PERSON`, la aplicación crea también su cuenta, membresía activa y rol `PARTNER`; un socio `BUSINESS` no tiene cuenta. La columna `user_id` permanece nullable para representar este último caso. Los auxilios externos (fase 6) **no** se registran aquí.
 
 ## Definición física
 

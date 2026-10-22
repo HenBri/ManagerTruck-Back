@@ -205,7 +205,7 @@ class PartnerDriverTruckSecurityTest {
     void crearConductorConDriverDeberiaDevolver403() throws Exception {
         mockMvc.perform(post("/api/companies/1/drivers").with(withRole("DRIVER"))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"driverName\":\"Chofer\",\"driverLicense\":\"LIC-1\"}"))
+                        .content("{\"driverLicense\":\"LIC-1\",\"email\":\"chofer@mail.com\",\"password\":\"password1\",\"name\":\"Chofer\",\"lastname\":\"Prueba\"}"))
                 .andExpect(status().isForbidden());
     }
 
@@ -217,7 +217,7 @@ class PartnerDriverTruckSecurityTest {
 
         mockMvc.perform(post("/api/companies/1/drivers").with(withRole("SECRETARY"))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"driverName\":\"Chofer\",\"driverLicense\":\"LIC-1\"}"))
+                        .content("{\"driverLicense\":\"LIC-1\",\"email\":\"chofer@mail.com\",\"password\":\"password1\",\"name\":\"Chofer\",\"lastname\":\"Prueba\"}"))
                 .andExpect(status().isCreated());
     }
 

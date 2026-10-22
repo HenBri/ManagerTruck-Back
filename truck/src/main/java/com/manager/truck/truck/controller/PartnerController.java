@@ -60,7 +60,8 @@ public class PartnerController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Crea un socio en la empresa (SUPER_ADMIN o SECRETARY de esa empresa)")
+    @Operation(summary = "Crea un socio en la empresa; PERSON crea cuenta, membresía y rol PARTNER "
+            + "(SUPER_ADMIN o SECRETARY de esa empresa)")
     public PartnerResponse create(
             @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
             @Valid @RequestBody PartnerRequest request) {

@@ -8,7 +8,7 @@
 
 ## Objetivo de negocio
 
-Registra a los **conductores** de una empresa de transporte. Un conductor **no necesariamente** es propietario de un camión y **no requiere** cuenta de usuario (`user_id` opcional). Driver es un **perfil del negocio**, no una cuenta independiente. `person_partner_id` se informa **solo cuando el conductor es la misma persona física** que un socio tipo `PERSON` (no es el campo de empleador/proveedor): permite que **un socio sea simultáneamente conductor** sin duplicar la persona. Los conductores de auxilio externo (fase 6) **no** se registran aquí. La asignación conductor↔camión (`truck_driver_assignment`) queda **fuera de esta iteración**.
+Registra a los **conductores** de una empresa de transporte. Un conductor **no necesariamente** es propietario de un camión y su alta crea una cuenta de usuario, membresía activa y rol `DRIVER`; Driver sigue siendo el **perfil del negocio** asociado a esa cuenta. `person_partner_id` se informa **solo cuando el conductor es la misma persona física** que un socio tipo `PERSON` (no es el campo de empleador/proveedor): permite que **un socio sea simultáneamente conductor** sin duplicar la persona. Los conductores de auxilio externo (fase 6) **no** se registran aquí. La asignación conductor↔camión (`truck_driver_assignment`) queda **fuera de esta iteración**.
 
 ## Definición física
 

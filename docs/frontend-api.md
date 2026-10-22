@@ -88,12 +88,12 @@ Las rutas de esta sección tienen el prefijo `/api/companies/{companyId}`.
 | Proveedores auxiliares | PUT | `/auxiliary-providers/{providerId}/status` | Cambiar estado | `SUPER_ADMIN`, `SECRETARY` | Por validar |
 | Socios | GET | `/partners` | Listar | Los cuatro roles; alcance de datos sujeto a reglas del caso de uso | Por validar |
 | Socios | GET | `/partners/{partnerId}` | Consultar | Los cuatro roles; reglas del caso de uso | Por validar |
-| Socios | POST | `/partners` | Crear (201) | `SUPER_ADMIN`, `SECRETARY` | Por validar |
+| Socios | POST | `/partners` | Crear (201); `PERSON` crea cuenta, membresía activa y rol `PARTNER`; `BUSINESS` no crea cuenta | `SUPER_ADMIN`, `SECRETARY` | En uso |
 | Socios | PUT | `/partners/{partnerId}` | Actualizar | `SUPER_ADMIN`, `SECRETARY` | Por validar |
 | Socios | PUT | `/partners/{partnerId}/status` | Cambiar estado | `SUPER_ADMIN`, `SECRETARY` | Por validar |
 | Conductores | GET | `/drivers` | Listar | Los cuatro roles; alcance de datos sujeto a reglas del caso de uso | Por validar |
 | Conductores | GET | `/drivers/{driverId}` | Consultar | Los cuatro roles; reglas del caso de uso | Por validar |
-| Conductores | POST | `/drivers` | Crear (201) | `SUPER_ADMIN`, `SECRETARY` | Por validar |
+| Conductores | POST | `/drivers` | Crear (201) junto con cuenta, membresía activa y rol `DRIVER` | `SUPER_ADMIN`, `SECRETARY` | En uso |
 | Conductores | PUT | `/drivers/{driverId}` | Actualizar | `SUPER_ADMIN`, `SECRETARY` | Por validar |
 | Conductores | PUT | `/drivers/{driverId}/status` | Cambiar estado | `SUPER_ADMIN`, `SECRETARY` | Por validar |
 | Camiones | GET | `/trucks` | Listar | `SUPER_ADMIN`, `SECRETARY`, `PARTNER`; alcance filtrado para socio | Por validar |
