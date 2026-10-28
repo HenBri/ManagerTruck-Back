@@ -1,7 +1,6 @@
 package com.manager.truck.truck.service;
 
 import com.manager.truck.truck.domain.Charge;
-import com.manager.truck.truck.domain.enums.ChargeState;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -11,16 +10,13 @@ public interface ChargeService {
 
     Charge save(Charge charge);
 
-    Charge findByCompanyIdAndChargeId(Long companyId, Long chargeId);
+    Charge update(Charge charge);
 
-    Optional<Charge> findOptionalByCompanyIdAndChargeId(Long companyId, Long chargeId);
+    Charge findById(Long chargeId);
 
-    Page<Charge> findByCompanyId(Long companyId, Pageable pageable);
+    Optional<Charge> findOptionalById(Long chargeId);
 
-    Page<Charge> findByCompanyIdAndContractId(Long companyId, Long contractId, Pageable pageable);
+    Page<Charge> findAll(Pageable pageable);
 
-    Page<Charge> findByCompanyIdAndChargeState(Long companyId, ChargeState chargeState, Pageable pageable);
-
-    Page<Charge> findByCompanyIdAndContractIdAndChargeState(Long companyId, Long contractId,
-                                                            ChargeState chargeState, Pageable pageable);
+    Page<Charge> findByContractId(Long contractId, Pageable pageable);
 }

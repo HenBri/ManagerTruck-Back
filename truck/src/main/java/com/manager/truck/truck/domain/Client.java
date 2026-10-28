@@ -9,7 +9,7 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Getter
 @Setter
@@ -21,9 +21,6 @@ public class Client {
     @Column(name = Constants.ClientTable.Id.NAME, nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long clientId;
-
-    @Column(name = Constants.ClientTable.CompanyId.NAME, nullable = false)
-    private Long companyId;
 
     @Column(name = Constants.ClientTable.Name.NAME, length = Constants.ClientTable.Name.LENGTH, nullable = false)
     private String clientName;
@@ -40,9 +37,24 @@ public class Client {
     @Column(name = Constants.ClientTable.Address.NAME, length = Constants.ClientTable.Address.LENGTH)
     private String clientAddress;
 
-    @Column(name = Constants.ClientTable.State.NAME, nullable = false)
-    private Boolean clientState;
+    @Column(name = Constants.ClientTable.TaxId.NAME, length = Constants.ClientTable.TaxId.LENGTH)
+    private String taxId;
 
-    @Column(name = Constants.ClientTable.CreateDate.NAME, insertable = false, updatable = false)
-    private LocalDateTime clientCreateDate;
+    @Column(name = Constants.ClientTable.ContactPerson.NAME, length = Constants.ClientTable.ContactPerson.LENGTH)
+    private String contactPerson;
+
+    @Column(name = Constants.ClientTable.ContactPhone.NAME, length = Constants.ClientTable.ContactPhone.LENGTH)
+    private String contactPhone;
+
+    @Column(name = Constants.ClientTable.DateCreate.NAME, insertable = false, updatable = false)
+    private OffsetDateTime dateCreate;
+
+    @Column(name = Constants.ClientTable.DateUpdate.NAME, insertable = false, updatable = false)
+    private OffsetDateTime dateUpdate;
+
+    @Column(name = Constants.ClientTable.IsDelete.NAME, nullable = false)
+    private Boolean isDelete = false;
+
+    @Column(name = Constants.ClientTable.State.NAME, length = Constants.ClientTable.State.LENGTH, nullable = false)
+    private String state = "ACTIVE";
 }

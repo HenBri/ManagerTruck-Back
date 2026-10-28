@@ -1,7 +1,6 @@
 package com.manager.truck.truck.service;
 
 import com.manager.truck.truck.domain.Charge;
-import com.manager.truck.truck.domain.enums.ChargeState;
 import com.manager.truck.truck.exception.ResourceNotFoundException;
 import com.manager.truck.truck.repository.ChargeRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,36 +22,28 @@ public class ChargeServiceImpl implements ChargeService {
     }
 
     @Override
-    public Charge findByCompanyIdAndChargeId(Long companyId, Long chargeId) {
-        return chargeRepository.findByCompanyIdAndChargeId(companyId, chargeId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Carga no encontrada con el id " + chargeId + " en la empresa " + companyId));
+    public Charge update(Charge charge) {
+        return chargeRepository.save(charge);
     }
 
     @Override
-    public Optional<Charge> findOptionalByCompanyIdAndChargeId(Long companyId, Long chargeId) {
-        return chargeRepository.findByCompanyIdAndChargeId(companyId, chargeId);
+    public Charge findById(Long chargeId) {
+        return chargeRepository.findActiveById(chargeId)
+                .orElseThrow(() -> new ResourceNotFoundException("Carga no encontrada con id " + chargeId));
     }
 
     @Override
-    public Page<Charge> findByCompanyId(Long companyId, Pageable pageable) {
-        return chargeRepository.findByCompanyId(companyId, pageable);
+    public Optional<Charge> findOptionalById(Long chargeId) {
+        return chargeRepository.findActiveById(chargeId);
     }
 
     @Override
-    public Page<Charge> findByCompanyIdAndContractId(Long companyId, Long contractId, Pageable pageable) {
-        return chargeRepository.findByCompanyIdAndContractId(companyId, contractId, pageable);
+    public Page<Charge> findAll(Pageable pageable) {
+        return chargeRepository.findAllActive(pageable);
     }
 
     @Override
-    public Page<Charge> findByCompanyIdAndChargeState(Long companyId, ChargeState chargeState, Pageable pageable) {
-        return chargeRepository.findByCompanyIdAndChargeState(companyId, chargeState, pageable);
-    }
-
-    @Override
-    public Page<Charge> findByCompanyIdAndContractIdAndChargeState(Long companyId, Long contractId,
-                                                                   ChargeState chargeState, Pageable pageable) {
-        return chargeRepository.findByCompanyIdAndContractIdAndChargeState(companyId, contractId,
-                chargeState, pageable);
+    public Page<Charge> findByContractId(Long contractId, Pageable pageable) {
+        return chargeRepository.findByContractId(contractId, pageable);
     }
 }

@@ -1,7 +1,6 @@
 package com.manager.truck.truck.service;
 
 import com.manager.truck.truck.domain.Contract;
-import com.manager.truck.truck.domain.enums.ContractState;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -11,16 +10,17 @@ public interface ContractService {
 
     Contract save(Contract contract);
 
-    Contract findByCompanyIdAndContractId(Long companyId, Long contractId);
+    Contract update(Contract contract);
 
-    Optional<Contract> findOptionalByCompanyIdAndContractId(Long companyId, Long contractId);
+    Contract findById(Long contractId);
 
-    Page<Contract> findByCompanyId(Long companyId, Pageable pageable);
+    Optional<Contract> findOptionalById(Long contractId);
 
-    Page<Contract> findByCompanyIdAndClientId(Long companyId, Long clientId, Pageable pageable);
+    boolean existsByContractCode(String contractCode);
 
-    Page<Contract> findByCompanyIdAndContractState(Long companyId, ContractState contractState, Pageable pageable);
+    boolean existsByContractCodeAndContractIdNot(String contractCode, Long contractId);
 
-    Page<Contract> findByCompanyIdAndClientIdAndContractState(Long companyId, Long clientId,
-                                                              ContractState contractState, Pageable pageable);
+    Page<Contract> findAll(Pageable pageable);
+
+    Page<Contract> findByClientId(Long clientId, Pageable pageable);
 }

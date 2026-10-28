@@ -17,4 +17,13 @@ public class ChargeRequest {
 
     @Size(max = 100)
     private String chargeType;
+
+    @Size(max = 80)
+    private String cargoReference;
+
+    private String goodsDescription;
+
+    private Boolean hazardousGoods = false;
+
+    private String handlingInstructions;
 }

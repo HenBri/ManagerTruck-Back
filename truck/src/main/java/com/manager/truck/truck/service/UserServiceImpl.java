@@ -29,47 +29,32 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findById(Long userId) {
-        return userRepository.findById(userId)
+        return userRepository.findActiveById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado: " + userId));
     }
 
     @Override
+    public Optional<User> findOptionalById(Long userId) {
+        return userRepository.findActiveById(userId);
+    }
+
+    @Override
     public Optional<User> findByEmail(String email) {
-        return userRepository.findByUserEmail(email);
+        return userRepository.findByPersonEmail(email);
     }
 
     @Override
     public boolean existsByEmail(String email) {
-        return userRepository.existsByUserEmail(email);
+        return userRepository.existsByPersonEmail(email);
     }
 
     @Override
     public Page<User> findAll(Pageable pageable) {
-        return userRepository.findAll(pageable);
+        return userRepository.findAllActive(pageable);
     }
 
     @Override
-    public List<String> findPlatformRoleNames(Long userId) {
-        return userRepository.findPlatformRoleNames(userId);
-    }
-
-    @Override
-    public List<String> findAllCompanyRoleNames(Long userId) {
-        return userRepository.findAllCompanyRoleNames(userId);
-    }
-
-    @Override
-    public List<String> findCompanyRoleNames(Long userId, Long companyId) {
-        return userRepository.findCompanyRoleNames(userId, companyId);
-    }
-
-    @Override
-    public boolean isActiveMember(Long userId, Long companyId) {
-        return userRepository.countActiveMembership(userId, companyId) > 0;
-    }
-
-    @Override
-    public Page<User> findCompanyMembers(Long companyId, Pageable pageable) {
-        return userRepository.findCompanyMembers(companyId, pageable);
+    public List<String> findRoleNames(Long userId) {
+        return userRepository.findRoleNames(userId);
     }
 }

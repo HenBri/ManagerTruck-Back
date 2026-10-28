@@ -1,23 +1,26 @@
 package com.manager.truck.truck.domain.dto.response;
 
 import com.manager.truck.truck.domain.Charge;
-import com.manager.truck.truck.domain.enums.ChargeState;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Getter
 @Setter
 public class ChargeResponse extends CommonResponse {
 
     private Long chargeId;
-    private Long companyId;
     private Long contractId;
     private String chargeDescription;
-    private LocalDateTime chargeDate;
+    private OffsetDateTime chargeDate;
     private String chargeType;
-    private ChargeState chargeState;
+    private String cargoReference;
+    private String goodsDescription;
+    private Boolean hazardousGoods;
+    private String handlingInstructions;
+    private String state;
+    private OffsetDateTime dateCreate;
 
     public ChargeResponse() {
         super(StatusCodeResponse.SUCCESS_CODE, StatusCodeResponse.SUCCESS_MSG);
@@ -26,12 +29,20 @@ public class ChargeResponse extends CommonResponse {
     public static ChargeResponse from(Charge charge) {
         ChargeResponse response = new ChargeResponse();
         response.setChargeId(charge.getChargeId());
-        response.setCompanyId(charge.getCompanyId());
         response.setContractId(charge.getContractId());
         response.setChargeDescription(charge.getChargeDescription());
         response.setChargeDate(charge.getChargeDate());
         response.setChargeType(charge.getChargeType());
-        response.setChargeState(charge.getChargeState());
+        response.setCargoReference(charge.getCargoReference());
+        response.setGoodsDescription(charge.getGoodsDescription());
+        response.setHazardousGoods(charge.getHazardousGoods());
+        response.setHandlingInstructions(charge.getHandlingInstructions());
+        response.setState(charge.getState());
+        response.setDateCreate(charge.getDateCreate());
         return response;
+    }
+
+    public String getChargeState() {
+        return state;
     }
 }

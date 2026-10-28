@@ -2,7 +2,6 @@ package com.manager.truck.truck.service;
 
 import com.manager.truck.truck.domain.AuxiliaryProvider;
 import com.manager.truck.truck.domain.enums.AuxiliaryProviderKind;
-import com.manager.truck.truck.domain.enums.AuxiliaryProviderStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -12,27 +11,19 @@ public interface AuxiliaryProviderService {
 
     AuxiliaryProvider save(AuxiliaryProvider provider);
 
-    AuxiliaryProvider findByCompanyIdAndProviderId(Long companyId, Long providerId);
+    AuxiliaryProvider update(AuxiliaryProvider provider);
 
-    Optional<AuxiliaryProvider> findOptionalByCompanyIdAndProviderId(Long companyId, Long providerId);
+    AuxiliaryProvider findById(Long providerId);
 
-    Page<AuxiliaryProvider> findByCompanyId(Long companyId, Pageable pageable);
+    Optional<AuxiliaryProvider> findOptionalById(Long providerId);
 
-    Page<AuxiliaryProvider> findByCompanyIdAndProviderKind(Long companyId, AuxiliaryProviderKind kind,
-                                                           Pageable pageable);
+    boolean existsByProviderName(String providerName);
 
-    Page<AuxiliaryProvider> findByCompanyIdAndProviderStatus(Long companyId, AuxiliaryProviderStatus status,
-                                                             Pageable pageable);
+    boolean existsByProviderNameAndProviderIdNot(String providerName, Long providerId);
 
-    Page<AuxiliaryProvider> findByCompanyIdAndProviderKindAndProviderStatus(Long companyId,
-                                                                            AuxiliaryProviderKind kind,
-                                                                            AuxiliaryProviderStatus status,
-                                                                            Pageable pageable);
+    Page<AuxiliaryProvider> findAll(Pageable pageable);
 
-    Page<AuxiliaryProvider> findByCompanyIdAndProviderNameContains(Long companyId, String name,
-                                                                   Pageable pageable);
+    Page<AuxiliaryProvider> findByProviderKind(AuxiliaryProviderKind kind, Pageable pageable);
 
-    boolean existsByCompanyIdAndProviderName(Long companyId, String providerName);
-
-    boolean existsByCompanyIdAndProviderNameNot(Long companyId, String providerName, Long providerId);
+    Page<AuxiliaryProvider> findByProviderNameContains(String name, Pageable pageable);
 }

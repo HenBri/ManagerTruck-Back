@@ -5,7 +5,6 @@ import com.manager.truck.truck.domain.dto.request.ContainerStatusRequest;
 import com.manager.truck.truck.domain.dto.request.ContainerUpdateRequest;
 import com.manager.truck.truck.domain.dto.response.ContainerResponse;
 import com.manager.truck.truck.domain.dto.response.ContainersResponse;
-import com.manager.truck.truck.domain.enums.ContainerState;
 import com.manager.truck.truck.usecase.container.GetAllContainersUseCase;
 import com.manager.truck.truck.usecase.container.GetContainerByIdUseCase;
 import com.manager.truck.truck.usecase.container.SaveContainerUseCase;
@@ -30,10 +29,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/companies/{companyId}/containers")
+@RequestMapping("/api/containers")
 @RequiredArgsConstructor
-@Tag(name = "Containers", description = "Contenedores de una carga; código único por empresa. "
-        + "Solo SUPER_ADMIN y SECRETARY administran (PARTNER/DRIVER sin acceso)")
+@Tag(name = "Containers", description = "Contenedores de una carga. Solo ADMIN y SECRETARY administran")
 public class ContainerController {
 
     private final GetAllContainersUseCase getAllContainersUseCase;
@@ -43,49 +41,40 @@ public class ContainerController {
     private final UpdateContainerStatusUseCase updateContainerStatusUseCase;
 
     @GetMapping
-    @Operation(summary = "Lista los contenedores de una empresa con filtros opcionales por carga y estado")
+    @Operation(summary = "Lista los contenedores con filtro opcional por carga")
     public ContainersResponse getAll(
-            @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
             @Parameter(description = "Filtra por carga dueña del contenedor") @RequestParam(required = false) Long chargeId,
-            @Parameter(description = "Filtra por estado del contenedor") @RequestParam(required = false) ContainerState state,
             @PageableDefault(size = 20, sort = "containerId") Pageable pageable) {
-        return getAllContainersUseCase.execute(companyId, chargeId, state, pageable);
+        return getAllContainersUseCase.execute(chargeId, pageable);
     }
 
     @GetMapping("/{containerId}")
-    @Operation(summary = "Consulta un contenedor por id dentro de la empresa")
+    @Operation(summary = "Consulta un contenedor por id")
     public ContainerResponse getById(
-            @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
             @Parameter(description = "Identificador del contenedor") @PathVariable Long containerId) {
-        return getContainerByIdUseCase.execute(companyId, containerId);
+        return getContainerByIdUseCase.execute(containerId);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Crea un contenedor para una carga no cancelada de la empresa "
-            + "(SUPER_ADMIN o SECRETARY); el código debe ser único por empresa")
-    public ContainerResponse create(
-            @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
-            @Valid @RequestBody ContainerRequest request) {
-        return saveContainerUseCase.execute(companyId, request);
+    @Operation(summary = "Crea un contenedor para una carga")
+    public ContainerResponse create(@Valid @RequestBody ContainerRequest request) {
+        return saveContainerUseCase.execute(request);
     }
 
     @PutMapping("/{containerId}")
-    @Operation(summary = "Actualiza los datos escalares de un contenedor sin cambiar carga ni estado")
+    @Operation(summary = "Actualiza los datos de un contenedor sin cambiar su estado")
     public ContainerResponse update(
-            @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
             @Parameter(description = "Identificador del contenedor") @PathVariable Long containerId,
             @Valid @RequestBody ContainerUpdateRequest request) {
-        return updateContainerUseCase.execute(companyId, containerId, request);
+        return updateContainerUseCase.execute(containerId, request);
     }
 
     @PutMapping("/{containerId}/status")
-    @Operation(summary = "Cambia el estado del contenedor con transiciones estrictas "
-            + "(AVAILABLE→LOADED→IN_TRANSIT→DELIVERED)")
+    @Operation(summary = "Cambia el estado del contenedor")
     public ContainerResponse updateStatus(
-            @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
             @Parameter(description = "Identificador del contenedor") @PathVariable Long containerId,
             @Valid @RequestBody ContainerStatusRequest request) {
-        return updateContainerStatusUseCase.execute(companyId, containerId, request);
+        return updateContainerStatusUseCase.execute(containerId, request);
     }
 }

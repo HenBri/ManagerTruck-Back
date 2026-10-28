@@ -1,6 +1,7 @@
 package com.manager.truck.truck.service;
 
 import com.manager.truck.truck.domain.Partner;
+import com.manager.truck.truck.domain.enums.PartnerType;
 import com.manager.truck.truck.exception.ResourceNotFoundException;
 import com.manager.truck.truck.repository.PartnerRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,29 +23,28 @@ public class PartnerServiceImpl implements PartnerService {
     }
 
     @Override
-    public Partner findByCompanyIdAndPartnerId(Long companyId, Long partnerId) {
-        return partnerRepository.findByCompanyIdAndPartnerId(companyId, partnerId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Socio no encontrado con el id " + partnerId + " en la empresa " + companyId));
+    public Partner update(Partner partner) {
+        return partnerRepository.save(partner);
     }
 
     @Override
-    public Optional<Partner> findOptionalByCompanyIdAndPartnerId(Long companyId, Long partnerId) {
-        return partnerRepository.findByCompanyIdAndPartnerId(companyId, partnerId);
+    public Partner findById(Long partnerId) {
+        return partnerRepository.findActiveById(partnerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Socio no encontrado con el id " + partnerId));
     }
 
     @Override
-    public Optional<Partner> findByCompanyIdAndUserId(Long companyId, Long userId) {
-        return partnerRepository.findByCompanyIdAndUserId(companyId, userId);
+    public Optional<Partner> findOptionalById(Long partnerId) {
+        return partnerRepository.findActiveById(partnerId);
     }
 
     @Override
-    public boolean existsByCompanyIdAndUserId(Long companyId, Long userId) {
-        return partnerRepository.existsByCompanyIdAndUserId(companyId, userId);
+    public Page<Partner> findAll(Pageable pageable) {
+        return partnerRepository.findAllActive(pageable);
     }
 
     @Override
-    public Page<Partner> findByCompanyId(Long companyId, Pageable pageable) {
-        return partnerRepository.findByCompanyId(companyId, pageable);
+    public Page<Partner> findByType(PartnerType partnerType, Pageable pageable) {
+        return partnerRepository.findByType(partnerType, pageable);
     }
 }

@@ -1,7 +1,6 @@
 package com.manager.truck.truck.repository;
 
 import com.manager.truck.truck.domain.Contract;
-import com.manager.truck.truck.domain.enums.ContractState;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,28 +11,20 @@ import java.util.Optional;
 
 public interface ContractRepository extends JpaRepository<Contract, Long> {
 
-    @Query("SELECT c FROM Contract c WHERE c.companyId = :companyId AND c.contractId = :contractId")
-    Optional<Contract> findByCompanyIdAndContractId(@Param("companyId") Long companyId,
-                                                    @Param("contractId") Long contractId);
+    @Query("SELECT c FROM Contract c WHERE c.contractId = :contractId AND c.isDelete = false")
+    Optional<Contract> findActiveById(@Param("contractId") Long contractId);
 
-    @Query("SELECT c FROM Contract c WHERE c.companyId = :companyId")
-    Page<Contract> findByCompanyId(@Param("companyId") Long companyId, Pageable pageable);
+    @Query("SELECT c FROM Contract c WHERE c.isDelete = false")
+    Page<Contract> findAllActive(Pageable pageable);
 
-    @Query("SELECT c FROM Contract c WHERE c.companyId = :companyId AND c.clientId = :clientId")
-    Page<Contract> findByCompanyIdAndClientId(@Param("companyId") Long companyId,
-                                              @Param("clientId") Long clientId,
-                                              Pageable pageable);
+    @Query("SELECT c FROM Contract c WHERE c.clientId = :clientId AND c.isDelete = false")
+    Page<Contract> findByClientId(@Param("clientId") Long clientId, Pageable pageable);
 
-    @Query("SELECT c FROM Contract c WHERE c.companyId = :companyId AND c.contractState = :contractState")
-    Page<Contract> findByCompanyIdAndContractState(@Param("companyId") Long companyId,
-                                                   @Param("contractState") ContractState contractState,
-                                                   Pageable pageable);
+    @Query("SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END FROM Contract c " +
+            "WHERE c.contractCode = :contractCode AND c.isDelete = false")
+    boolean existsByContractCode(@Param("contractCode") String contractCode);
 
-    @Query("SELECT c FROM Contract c WHERE c.companyId = :companyId AND c.clientId = :clientId "
-            + "AND c.contractState = :contractState")
-    Page<Contract> findByCompanyIdAndClientIdAndContractState(
-            @Param("companyId") Long companyId,
-            @Param("clientId") Long clientId,
-            @Param("contractState") ContractState contractState,
-            Pageable pageable);
+    @Query("SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END FROM Contract c " +
+            "WHERE c.contractCode = :contractCode AND c.contractId <> :contractId AND c.isDelete = false")
+    boolean existsByContractCodeAndContractIdNot(@Param("contractCode") String contractCode, @Param("contractId") Long contractId);
 }

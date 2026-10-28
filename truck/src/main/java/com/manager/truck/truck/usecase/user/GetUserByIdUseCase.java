@@ -17,8 +17,8 @@ public class GetUserByIdUseCase {
 
     public UserResponse execute(Long userId) {
         CurrentUser currentUser = currentUserProvider.get();
-        if (!currentUser.userId().equals(userId) && !currentUserProvider.isSuperAdmin()) {
-            throw new ForbiddenOperationException("Solo puede consultar su propia cuenta o ser SUPER_ADMIN");
+        if (!currentUser.userId().equals(userId) && !currentUserProvider.isAdmin()) {
+            throw new ForbiddenOperationException("Solo puede consultar su propia cuenta o ser administrador");
         }
         return UserResponse.from(userService.findById(userId));
     }

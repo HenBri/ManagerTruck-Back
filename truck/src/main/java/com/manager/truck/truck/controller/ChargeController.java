@@ -30,10 +30,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/companies/{companyId}/charges")
+@RequestMapping("/api/charges")
 @RequiredArgsConstructor
-@Tag(name = "Charges", description = "Cargas de un contrato; el cliente se deriva del contrato. "
-        + "Solo SUPER_ADMIN y SECRETARY administran (PARTNER/DRIVER sin acceso)")
+@Tag(name = "Charges", description = "Cargas de un contrato. Solo ADMIN y SECRETARY administran")
 public class ChargeController {
 
     private final GetAllChargesUseCase getAllChargesUseCase;
@@ -43,49 +42,40 @@ public class ChargeController {
     private final UpdateChargeStatusUseCase updateChargeStatusUseCase;
 
     @GetMapping
-    @Operation(summary = "Lista las cargas de una empresa con filtros opcionales por contrato y estado")
+    @Operation(summary = "Lista las cargas con filtros opcionales por contrato")
     public ChargesResponse getAll(
-            @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
             @Parameter(description = "Filtra por contrato dueño de la carga") @RequestParam(required = false) Long contractId,
-            @Parameter(description = "Filtra por estado de la carga") @RequestParam(required = false) ChargeState state,
             @PageableDefault(size = 20, sort = "chargeId") Pageable pageable) {
-        return getAllChargesUseCase.execute(companyId, contractId, state, pageable);
+        return getAllChargesUseCase.execute(contractId, pageable);
     }
 
     @GetMapping("/{chargeId}")
-    @Operation(summary = "Consulta una carga por id dentro de la empresa")
+    @Operation(summary = "Consulta una carga por id")
     public ChargeResponse getById(
-            @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
             @Parameter(description = "Identificador de la carga") @PathVariable Long chargeId) {
-        return getChargeByIdUseCase.execute(companyId, chargeId);
+        return getChargeByIdUseCase.execute(chargeId);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Crea una carga para un contrato ACTIVO de la empresa "
-            + "(SUPER_ADMIN o SECRETARY); el cliente se deriva del contrato")
-    public ChargeResponse create(
-            @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
-            @Valid @RequestBody ChargeRequest request) {
-        return saveChargeUseCase.execute(companyId, request);
+    @Operation(summary = "Crea una carga para un contrato")
+    public ChargeResponse create(@Valid @RequestBody ChargeRequest request) {
+        return saveChargeUseCase.execute(request);
     }
 
     @PutMapping("/{chargeId}")
-    @Operation(summary = "Actualiza los datos escalares de una carga sin cambiar contrato ni estado")
+    @Operation(summary = "Actualiza los datos de una carga sin cambiar su estado")
     public ChargeResponse update(
-            @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
             @Parameter(description = "Identificador de la carga") @PathVariable Long chargeId,
             @Valid @RequestBody ChargeUpdateRequest request) {
-        return updateChargeUseCase.execute(companyId, chargeId, request);
+        return updateChargeUseCase.execute(chargeId, request);
     }
 
     @PutMapping("/{chargeId}/status")
-    @Operation(summary = "Cambia el estado de la carga con transiciones estrictas "
-            + "(PENDING→IN_TRANSIT|CANCELLED, IN_TRANSIT→DELIVERED|CANCELLED)")
+    @Operation(summary = "Cambia el estado de la carga")
     public ChargeResponse updateStatus(
-            @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
             @Parameter(description = "Identificador de la carga") @PathVariable Long chargeId,
             @Valid @RequestBody ChargeStatusRequest request) {
-        return updateChargeStatusUseCase.execute(companyId, chargeId, request);
+        return updateChargeStatusUseCase.execute(chargeId, request);
     }
 }

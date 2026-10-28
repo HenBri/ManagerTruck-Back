@@ -1,85 +1,112 @@
 package com.manager.truck.truck.usecase.driver;
 
 import com.manager.truck.truck.domain.Driver;
-import com.manager.truck.truck.domain.Partner;
+import com.manager.truck.truck.domain.Person;
+import com.manager.truck.truck.domain.Role;
+import com.manager.truck.truck.domain.TruckDriverAssignment;
 import com.manager.truck.truck.domain.User;
+import com.manager.truck.truck.domain.UserRole;
+import com.manager.truck.truck.domain.UserRoleId;
 import com.manager.truck.truck.domain.dto.request.DriverRequest;
-import com.manager.truck.truck.domain.dto.request.TruckDriverAssignmentRequest;
 import com.manager.truck.truck.domain.dto.response.DriverResponse;
-import com.manager.truck.truck.domain.enums.CompanyStatus;
-import com.manager.truck.truck.domain.enums.DriverStatus;
-import com.manager.truck.truck.domain.enums.PartnerType;
-import com.manager.truck.truck.exception.BadRequestException;
 import com.manager.truck.truck.exception.ConflictException;
-import com.manager.truck.truck.exception.ResourceNotFoundException;
+import com.manager.truck.truck.repository.RoleRepository;
+import com.manager.truck.truck.repository.UserRoleRepository;
 import com.manager.truck.truck.security.CurrentUserProvider;
-import com.manager.truck.truck.service.CompanyAccountProvisioningService;
-import com.manager.truck.truck.service.CompanyService;
+import com.manager.truck.truck.security.SecurityRoles;
 import com.manager.truck.truck.service.DriverService;
 import com.manager.truck.truck.service.LicenseValidationService;
-import com.manager.truck.truck.service.PartnerService;
-import com.manager.truck.truck.usecase.truckdriverassignment.AssignTruckDriverUseCase;
+import com.manager.truck.truck.service.PersonService;
+import com.manager.truck.truck.service.TruckDriverAssignmentService;
+import com.manager.truck.truck.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Service
 @RequiredArgsConstructor
 public class SaveDriverUseCase {
 
     private final DriverService driverService;
-    private final PartnerService partnerService;
-    private final CompanyService companyService;
-    private final CompanyAccountProvisioningService accountProvisioningService;
+    private final PersonService personService;
+    private final UserService userService;
+    private final RoleRepository roleRepository;
+    private final UserRoleRepository userRoleRepository;
+    private final PasswordEncoder passwordEncoder;
     private final LicenseValidationService licenseValidationService;
+    private final TruckDriverAssignmentService assignmentService;
     private final CurrentUserProvider currentUserProvider;
-    private final AssignTruckDriverUseCase assignTruckDriverUseCase;
 
     @Transactional
-    public DriverResponse execute(Long companyId, DriverRequest request) {
-        currentUserProvider.requireCompanyAdmin(companyId);
-        if (companyService.findById(companyId).getCompanyStatus() != CompanyStatus.ACTIVE) {
-            throw new ConflictException("No se pueden crear conductores en una empresa inactiva");
-        }
+    public DriverResponse execute(DriverRequest request) {
+        currentUserProvider.requireAdminOrSecretary();
         licenseValidationService.validate(request.getLicenseCategory(), request.getLicenseExpiration());
-        User user = accountProvisioningService.provision(companyId, request.getEmail(), request.getPassword(),
-                request.getName(), request.getLastname(), request.getCi(), request.getPhone(), "DRIVER");
-        if (request.getPersonPartnerId() != null) {
-            validatePersonPartner(companyId, request.getPersonPartnerId());
+        if (driverService.existsByDriverLicense(request.getDriverLicense().trim())) {
+            throw new ConflictException("Ya existe un conductor con la licencia " + request.getDriverLicense());
         }
+
+        Person person;
+        if (request.getPersonId() != null) {
+            person = personService.findById(request.getPersonId());
+        } else {
+            if (request.getEmail() != null && personService.existsByEmail(request.getEmail().trim())) {
+                throw new ConflictException("Ya existe una persona registrada con el email " + request.getEmail());
+            }
+            person = new Person();
+            person.setFirstName(request.getFirstName());
+            person.setLastName(request.getLastName());
+            person.setMaternalLastName(request.getMaternalLastName());
+            person.setDocumentNumber(request.getDocumentNumber());
+            person.setPhone(request.getPhone());
+            person.setEmail(request.getEmail() != null ? request.getEmail().trim() : null);
+            person.setState("ACTIVE");
+            person = personService.save(person);
+        }
+
+        if (driverService.findOptionalById(person.getPersonId()).isPresent()) {
+            throw new ConflictException("Esta persona ya está registrada como conductor");
+        }
+
+        // Si se provee contraseña y la persona no tiene usuario, creamos usuario con rol DRIVER
+        if (request.getPassword() != null && !request.getPassword().isBlank()) {
+            if (userService.findByEmail(person.getEmail()).isEmpty()) {
+                User user = new User();
+                user.setPersonId(person.getPersonId());
+                user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
+                user.setState("ACTIVE");
+                user = userService.save(user);
+
+                Role driverRole = roleRepository.findByRoleName(SecurityRoles.DRIVER).orElse(null);
+                if (driverRole != null) {
+                    UserRole userRole = new UserRole();
+                    userRole.setId(new UserRoleId(user.getUserId(), driverRole.getRoleId()));
+                    userRole.setState("ACTIVE");
+                    userRoleRepository.save(userRole);
+                }
+            }
+        }
+
         Driver driver = new Driver();
-        driver.setCompanyId(companyId);
-        driver.setUserId(user.getUserId());
-        driver.setPersonPartnerId(request.getPersonPartnerId());
-        driver.setDriverName(user.getUserName() + " " + user.getUserLastname());
-        driver.setDriverCi(user.getUserCi());
-        driver.setDriverPhone(user.getUserPhone());
+        driver.setDriverId(person.getPersonId());
         driver.setDriverLicense(request.getDriverLicense().trim());
         driver.setLicenseCategory(licenseValidationService.normalizeCategory(request.getLicenseCategory()));
         driver.setLicenseExpiration(request.getLicenseExpiration());
-        driver.setDriverState(DriverStatus.ACTIVE);
+        driver.setState("ACTIVE");
         Driver saved = driverService.save(driver);
+        saved.setPerson(person);
+
         if (request.getTruckId() != null) {
-            TruckDriverAssignmentRequest assignment = new TruckDriverAssignmentRequest();
+            TruckDriverAssignment assignment = new TruckDriverAssignment();
             assignment.setTruckId(request.getTruckId());
             assignment.setDriverId(saved.getDriverId());
-            assignment.setAssignedFrom(LocalDateTime.now());
-            assignTruckDriverUseCase.execute(companyId, assignment);
+            assignment.setAssignedFrom(OffsetDateTime.now());
+            assignment.setState("ACTIVE");
+            assignmentService.save(assignment);
         }
-        return DriverResponse.from(saved);
-    }
 
-    private void validatePersonPartner(Long companyId, Long personPartnerId) {
-        Partner partner = partnerService.findByCompanyIdAndPartnerId(companyId, personPartnerId);
-        if (partner.getPartnerType() != PartnerType.PERSON) {
-            throw new BadRequestException(
-                    "person_partner_id debe referenciar un socio de tipo PERSON de la misma empresa");
-        }
-        if (driverService.existsByCompanyIdAndPersonPartnerId(companyId, personPartnerId)) {
-            throw new ConflictException(
-                    "Ese socio ya está vinculado como conductor de esta empresa");
-        }
+        return DriverResponse.from(saved);
     }
 }

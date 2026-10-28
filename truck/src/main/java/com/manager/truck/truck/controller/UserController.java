@@ -4,10 +4,8 @@ import com.manager.truck.truck.domain.dto.request.UserPasswordRequest;
 import com.manager.truck.truck.domain.dto.request.UserRegisterRequest;
 import com.manager.truck.truck.domain.dto.request.UserStatusRequest;
 import com.manager.truck.truck.domain.dto.request.UserUpdateRequest;
-import com.manager.truck.truck.domain.dto.response.MyMembershipsResponse;
 import com.manager.truck.truck.domain.dto.response.UserResponse;
 import com.manager.truck.truck.domain.dto.response.UsersResponse;
-import com.manager.truck.truck.usecase.companyuser.GetMyMembershipsUseCase;
 import com.manager.truck.truck.usecase.user.GetAllUsersUseCase;
 import com.manager.truck.truck.usecase.user.GetCurrentUserUseCase;
 import com.manager.truck.truck.usecase.user.GetUserByIdUseCase;
@@ -35,7 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
-@Tag(name = "Users", description = "Cuentas globales del SaaS (sin asignación de roles ni empresas)")
+@Tag(name = "Users", description = "Gestión de usuarios")
 public class UserController {
 
     private final RegisterUserUseCase registerUserUseCase;
@@ -45,19 +43,18 @@ public class UserController {
     private final UpdateUserPasswordUseCase updateUserPasswordUseCase;
     private final UpdateUserStatusUseCase updateUserStatusUseCase;
     private final GetAllUsersUseCase getAllUsersUseCase;
-    private final GetMyMembershipsUseCase getMyMembershipsUseCase;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Registra una cuenta nueva con contraseña hasheada (público, sin roles ni empresas)")
+    @Operation(summary = "Registra una cuenta nueva con contraseña hasheada")
     public UserResponse register(@Valid @RequestBody UserRegisterRequest request) {
         return registerUserUseCase.execute(request);
     }
 
     @PostMapping("/admin")
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Crea una cuenta desde el panel de plataforma (solo SUPER_ADMIN; sin roles ni empresas)")
-    public UserResponse registerByPlatformAdmin(@Valid @RequestBody UserRegisterRequest request) {
+    @Operation(summary = "Crea una cuenta desde el panel de administración")
+    public UserResponse registerByAdmin(@Valid @RequestBody UserRegisterRequest request) {
         return registerUserUseCase.execute(request);
     }
 
@@ -67,21 +64,15 @@ public class UserController {
         return getCurrentUserUseCase.execute();
     }
 
-    @GetMapping("/me/memberships")
-    @Operation(summary = "Lista las membresías y roles propios de la cuenta autenticada (multiempresa)")
-    public MyMembershipsResponse getMyMemberships() {
-        return getMyMembershipsUseCase.execute();
-    }
-
     @GetMapping("/{userId}")
-    @Operation(summary = "Consulta una cuenta por id (propia o SUPER_ADMIN)")
+    @Operation(summary = "Consulta una cuenta por id (propia o ADMIN)")
     public UserResponse getById(
             @Parameter(description = "Identificador de la cuenta") @PathVariable("userId") Long userId) {
         return getUserByIdUseCase.execute(userId);
     }
 
     @PutMapping("/{userId}")
-    @Operation(summary = "Actualiza datos personales de una cuenta (propia o SUPER_ADMIN)")
+    @Operation(summary = "Actualiza datos personales de una cuenta (propia o ADMIN)")
     public UserResponse update(
             @Parameter(description = "Identificador de la cuenta") @PathVariable("userId") Long userId,
             @Valid @RequestBody UserUpdateRequest request) {
@@ -97,7 +88,7 @@ public class UserController {
     }
 
     @PutMapping("/{userId}/status")
-    @Operation(summary = "Activa o desactiva una cuenta (SUPER_ADMIN)")
+    @Operation(summary = "Activa o desactiva una cuenta (ADMIN)")
     public UserResponse updateStatus(
             @Parameter(description = "Identificador de la cuenta") @PathVariable("userId") Long userId,
             @Valid @RequestBody UserStatusRequest request) {
@@ -105,9 +96,8 @@ public class UserController {
     }
 
     @GetMapping
-    @Operation(summary = "Lista cuentas globalmente paginadas (SUPER_ADMIN)")
-    public UsersResponse getAll(
-            @PageableDefault(size = 20, sort = "userId") Pageable pageable) {
+    @Operation(summary = "Lista todas las cuentas registradas (ADMIN)")
+    public UsersResponse getAll(@PageableDefault(size = 20, sort = "userId") Pageable pageable) {
         return getAllUsersUseCase.execute(pageable);
     }
 }

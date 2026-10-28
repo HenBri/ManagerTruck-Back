@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Getter
 @Setter
@@ -17,7 +17,7 @@ public class TruckDriverAssignmentRequest {
     private Long driverId;
 
     @NotNull
-    private LocalDateTime assignedFrom;
+    private OffsetDateTime assignedFrom;
 
-    private LocalDateTime assignedUntil;
+    private OffsetDateTime assignedUntil;
 }

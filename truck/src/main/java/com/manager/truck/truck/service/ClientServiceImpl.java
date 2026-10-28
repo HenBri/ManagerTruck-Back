@@ -22,24 +22,33 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public Client findByCompanyIdAndClientId(Long companyId, Long clientId) {
-        return clientRepository.findByCompanyIdAndClientId(companyId, clientId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Cliente no encontrado con el id " + clientId + " en la empresa " + companyId));
+    public Client update(Client client) {
+        return clientRepository.save(client);
     }
 
     @Override
-    public Optional<Client> findOptionalByCompanyIdAndClientId(Long companyId, Long clientId) {
-        return clientRepository.findByCompanyIdAndClientId(companyId, clientId);
+    public Client findById(Long clientId) {
+        return clientRepository.findActiveById(clientId)
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con id " + clientId));
     }
 
     @Override
-    public Page<Client> findByCompanyId(Long companyId, Pageable pageable) {
-        return clientRepository.findByCompanyId(companyId, pageable);
+    public Optional<Client> findOptionalById(Long clientId) {
+        return clientRepository.findActiveById(clientId);
     }
 
     @Override
-    public Page<Client> findByCompanyIdAndClientState(Long companyId, Boolean clientState, Pageable pageable) {
-        return clientRepository.findByCompanyIdAndClientState(companyId, clientState, pageable);
+    public boolean existsByClientName(String clientName) {
+        return clientRepository.existsByClientName(clientName);
+    }
+
+    @Override
+    public boolean existsByClientNameAndClientIdNot(String clientName, Long clientId) {
+        return clientRepository.existsByClientNameAndClientIdNot(clientName, clientId);
+    }
+
+    @Override
+    public Page<Client> findAll(Pageable pageable) {
+        return clientRepository.findAllActive(pageable);
     }
 }

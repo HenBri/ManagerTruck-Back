@@ -29,10 +29,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/companies/{companyId}/clients")
+@RequestMapping("/api/clients")
 @RequiredArgsConstructor
-@Tag(name = "Clients", description = "Clientes de la empresa gestora; "
-        + "solo SUPER_ADMIN y SECRETARY administran (PARTNER/DRIVER sin acceso)")
+@Tag(name = "Clients", description = "Clientes de la empresa. Solo ADMIN y SECRETARY administran")
 public class ClientController {
 
     private final GetAllClientsUseCase getAllClientsUseCase;
@@ -42,47 +41,38 @@ public class ClientController {
     private final UpdateClientStatusUseCase updateClientStatusUseCase;
 
     @GetMapping
-    @Operation(summary = "Lista los clientes de una empresa con filtro opcional por estado")
-    public ClientsResponse getAll(
-            @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
-            @Parameter(description = "Filtra por estado activo/inactivo del cliente")
-            @RequestParam(required = false) Boolean active,
-            @PageableDefault(size = 20, sort = "clientId") Pageable pageable) {
-        return getAllClientsUseCase.execute(companyId, active, pageable);
+    @Operation(summary = "Lista los clientes")
+    public ClientsResponse getAll(@PageableDefault(size = 20, sort = "clientId") Pageable pageable) {
+        return getAllClientsUseCase.execute(pageable);
     }
 
     @GetMapping("/{clientId}")
-    @Operation(summary = "Consulta un cliente por id dentro de la empresa")
+    @Operation(summary = "Consulta un cliente por id")
     public ClientResponse getById(
-            @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
             @Parameter(description = "Identificador del cliente") @PathVariable Long clientId) {
-        return getClientByIdUseCase.execute(companyId, clientId);
+        return getClientByIdUseCase.execute(clientId);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Crea un cliente en la empresa (SUPER_ADMIN o SECRETARY de esa empresa)")
-    public ClientResponse create(
-            @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
-            @Valid @RequestBody ClientRequest request) {
-        return saveClientUseCase.execute(companyId, request);
+    @Operation(summary = "Crea un cliente")
+    public ClientResponse create(@Valid @RequestBody ClientRequest request) {
+        return saveClientUseCase.execute(request);
     }
 
     @PutMapping("/{clientId}")
-    @Operation(summary = "Actualiza los datos escalares de un cliente (SUPER_ADMIN o SECRETARY de esa empresa)")
+    @Operation(summary = "Actualiza los datos de un cliente")
     public ClientResponse update(
-            @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
             @Parameter(description = "Identificador del cliente") @PathVariable Long clientId,
             @Valid @RequestBody ClientUpdateRequest request) {
-        return updateClientUseCase.execute(companyId, clientId, request);
+        return updateClientUseCase.execute(clientId, request);
     }
 
     @PutMapping("/{clientId}/status")
-    @Operation(summary = "Activa o desactiva un cliente (SUPER_ADMIN o SECRETARY de esa empresa)")
+    @Operation(summary = "Activa o desactiva un cliente")
     public ClientResponse updateStatus(
-            @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
             @Parameter(description = "Identificador del cliente") @PathVariable Long clientId,
             @Valid @RequestBody ClientStatusRequest request) {
-        return updateClientStatusUseCase.execute(companyId, clientId, request);
+        return updateClientStatusUseCase.execute(clientId, request);
     }
 }

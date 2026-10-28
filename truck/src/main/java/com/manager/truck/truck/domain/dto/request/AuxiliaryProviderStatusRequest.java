@@ -1,7 +1,6 @@
 package com.manager.truck.truck.domain.dto.request;
 
-import com.manager.truck.truck.domain.enums.AuxiliaryProviderStatus;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,6 +8,6 @@ import lombok.Setter;
 @Setter
 public class AuxiliaryProviderStatusRequest {
 
-    @NotNull
-    private AuxiliaryProviderStatus status;
+    @NotBlank
+    private String state;
 }

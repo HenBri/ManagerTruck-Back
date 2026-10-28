@@ -6,7 +6,6 @@ import com.manager.truck.truck.domain.dto.response.TruckDriverAssignmentResponse
 import com.manager.truck.truck.exception.BadRequestException;
 import com.manager.truck.truck.exception.ConflictException;
 import com.manager.truck.truck.security.CurrentUserProvider;
-import com.manager.truck.truck.service.CompanyService;
 import com.manager.truck.truck.service.TruckDriverAssignmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,15 +16,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class EndTruckDriverAssignmentUseCase {
 
     private final TruckDriverAssignmentService assignmentService;
-    private final CompanyService companyService;
     private final CurrentUserProvider currentUserProvider;
 
     @Transactional
-    public TruckDriverAssignmentResponse execute(Long companyId, Long assignmentId,
+    public TruckDriverAssignmentResponse execute(Long assignmentId,
                                                  TruckDriverAssignmentEndRequest request) {
-        currentUserProvider.requireCompanyAdmin(companyId);
-        companyService.findById(companyId);
-        TruckDriverAssignment assignment = assignmentService.findByCompanyIdAndAssignmentId(companyId, assignmentId);
+        currentUserProvider.requireAdminOrSecretary();
+        TruckDriverAssignment assignment = assignmentService.findById(assignmentId);
         if (assignment.getAssignedUntil() != null) {
             throw new ConflictException("La asignación " + assignmentId + " ya fue finalizada");
         }
@@ -34,7 +31,7 @@ public class EndTruckDriverAssignmentUseCase {
                     + assignment.getAssignedFrom() + ")");
         }
         assignment.setAssignedUntil(request.getAssignedUntil());
-        TruckDriverAssignment saved = assignmentService.save(assignment);
+        TruckDriverAssignment saved = assignmentService.update(assignment);
         return TruckDriverAssignmentResponse.from(saved);
     }
 }

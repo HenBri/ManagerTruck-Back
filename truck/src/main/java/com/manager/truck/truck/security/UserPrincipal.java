@@ -1,25 +1,25 @@
 package com.manager.truck.truck.security;
 
-import com.manager.truck.truck.domain.enums.UserStatus;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.Set;
 
 public class UserPrincipal implements UserDetails {
 
     private final Long id;
     private final String email;
     private final String passwordHash;
-    private final UserStatus status;
-    private final Collection<? extends GrantedAuthority> authorities;
+    private final String state;
+    private final Set<? extends GrantedAuthority> authorities;
 
-    public UserPrincipal(Long id, String email, String passwordHash, UserStatus status,
-                         Collection<? extends GrantedAuthority> authorities) {
+    public UserPrincipal(Long id, String email, String passwordHash, String state,
+                         Set<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.email = email;
         this.passwordHash = passwordHash;
-        this.status = status;
+        this.state = state;
         this.authorities = authorities;
     }
 
@@ -63,6 +63,6 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return status == UserStatus.ACTIVE;
+        return "ACTIVE".equalsIgnoreCase(state);
     }
 }

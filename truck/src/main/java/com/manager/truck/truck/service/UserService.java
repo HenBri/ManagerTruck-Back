@@ -15,19 +15,13 @@ public interface UserService {
 
     User findById(Long userId);
 
+    Optional<User> findOptionalById(Long userId);
+
     Optional<User> findByEmail(String email);
 
     boolean existsByEmail(String email);
 
     Page<User> findAll(Pageable pageable);
 
-    List<String> findPlatformRoleNames(Long userId);
-
-    List<String> findAllCompanyRoleNames(Long userId);
-
-    List<String> findCompanyRoleNames(Long userId, Long companyId);
-
-    boolean isActiveMember(Long userId, Long companyId);
-
-    Page<User> findCompanyMembers(Long companyId, Pageable pageable);
+    List<String> findRoleNames(Long userId);
 }

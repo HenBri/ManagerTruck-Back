@@ -11,4 +11,12 @@ public class JourneyStatusRequest {
 
     @NotNull
     private JourneyState status;
+
+    public JourneyState getState() {
+        return status;
+    }
+
+    public void setState(JourneyState state) {
+        this.status = state;
+    }
 }

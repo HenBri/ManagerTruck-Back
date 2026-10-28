@@ -11,17 +11,25 @@ import lombok.Setter;
 @Setter
 public class PartnerRequest {
 
-    @NotNull
-    private PartnerType partnerType;
+    private Long personId;
 
-    @Size(max = 150)
-    private String partnerName;
+    @NotNull
+    private PartnerType partnerType = PartnerType.PERSON;
+
+    @Size(max = 100)
+    private String firstName;
+
+    @Size(max = 100)
+    private String lastName;
+
+    @Size(max = 100)
+    private String maternalLastName;
 
     @Size(max = 30)
-    private String partnerDocument;
+    private String documentNumber;
 
     @Size(max = 25)
-    private String partnerPhone;
+    private String phone;
 
     @Email
     @Size(max = 255)
@@ -30,15 +38,52 @@ public class PartnerRequest {
     @Size(min = 8, max = 72)
     private String password;
 
-    @Size(max = 100)
-    private String name;
+    // Compatibilidad hacia atrás
+    public String getPartnerName() {
+        return firstName != null ? firstName + (lastName != null ? " " + lastName : "") : null;
+    }
 
-    @Size(max = 150)
-    private String lastname;
+    public void setPartnerName(String name) {
+        if (this.firstName == null && name != null) {
+            String[] parts = name.split(" ", 2);
+            this.firstName = parts[0];
+            if (parts.length > 1) {
+                this.lastName = parts[1];
+            } else {
+                this.lastName = "";
+            }
+        }
+    }
 
-    @Size(max = 30)
-    private String ci;
+    public String getPartnerDocument() {
+        return documentNumber;
+    }
 
-    @Size(max = 25)
-    private String phone;
+    public void setPartnerDocument(String doc) {
+        if (this.documentNumber == null) {
+            this.documentNumber = doc;
+        }
+    }
+
+    public String getPartnerPhone() {
+        return phone;
+    }
+
+    public void setPartnerPhone(String phone) {
+        if (this.phone == null) {
+            this.phone = phone;
+        }
+    }
+
+    public void setName(String name) {
+        if (this.firstName == null) this.firstName = name;
+    }
+
+    public void setLastname(String lastname) {
+        if (this.lastName == null) this.lastName = lastname;
+    }
+
+    public void setCi(String ci) {
+        if (this.documentNumber == null) this.documentNumber = ci;
+    }
 }

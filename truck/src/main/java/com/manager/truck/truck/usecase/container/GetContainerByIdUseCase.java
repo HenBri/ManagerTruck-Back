@@ -3,7 +3,6 @@ package com.manager.truck.truck.usecase.container;
 import com.manager.truck.truck.domain.Container;
 import com.manager.truck.truck.domain.dto.response.ContainerResponse;
 import com.manager.truck.truck.security.CurrentUserProvider;
-import com.manager.truck.truck.service.CompanyService;
 import com.manager.truck.truck.service.ContainerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,13 +12,11 @@ import org.springframework.stereotype.Service;
 public class GetContainerByIdUseCase {
 
     private final ContainerService containerService;
-    private final CompanyService companyService;
     private final CurrentUserProvider currentUserProvider;
 
-    public ContainerResponse execute(Long companyId, Long containerId) {
-        currentUserProvider.requireCompanyAdmin(companyId);
-        companyService.findById(companyId);
-        Container container = containerService.findByCompanyIdAndContainerId(companyId, containerId);
+    public ContainerResponse execute(Long containerId) {
+        currentUserProvider.requireAdminOrSecretary();
+        Container container = containerService.findById(containerId);
         return ContainerResponse.from(container);
     }
 }

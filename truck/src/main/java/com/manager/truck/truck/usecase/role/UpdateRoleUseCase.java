@@ -4,7 +4,6 @@ import com.manager.truck.truck.domain.Role;
 import com.manager.truck.truck.domain.dto.request.RoleUpdateRequest;
 import com.manager.truck.truck.domain.dto.response.RoleResponse;
 import com.manager.truck.truck.exception.ConflictException;
-import com.manager.truck.truck.exception.ForbiddenOperationException;
 import com.manager.truck.truck.security.CurrentUserProvider;
 import com.manager.truck.truck.service.RoleService;
 import lombok.RequiredArgsConstructor;
@@ -21,9 +20,7 @@ public class UpdateRoleUseCase {
 
     @Transactional
     public RoleResponse execute(Integer roleId, RoleUpdateRequest request) {
-        if (!currentUserProvider.isSuperAdmin()) {
-            throw new ForbiddenOperationException("Solo SUPER_ADMIN puede modificar roles");
-        }
+        currentUserProvider.requireAdmin();
         Role role = roleService.findById(roleId);
         if (!role.getRoleName().equals(request.getName()) && roleService.existsByRoleName(request.getName())) {
             throw new ConflictException("Ya existe un rol con el nombre: " + request.getName());

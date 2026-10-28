@@ -5,7 +5,6 @@ import com.manager.truck.truck.domain.dto.request.JourneyStatusRequest;
 import com.manager.truck.truck.domain.dto.request.JourneyUpdateRequest;
 import com.manager.truck.truck.domain.dto.response.JourneyResponse;
 import com.manager.truck.truck.domain.dto.response.JourneysResponse;
-import com.manager.truck.truck.domain.enums.JourneyExecutionType;
 import com.manager.truck.truck.domain.enums.JourneyState;
 import com.manager.truck.truck.usecase.journey.GetAllJourneysUseCase;
 import com.manager.truck.truck.usecase.journey.GetJourneyByIdUseCase;
@@ -31,12 +30,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/companies/{companyId}/journeys")
+@RequestMapping("/api/journeys")
 @RequiredArgsConstructor
-@Tag(name = "Journeys",
-        description = "Viajes A -> B de un solo camión/conductor; modalidad PARTNER (asignación) o "
-                + "AUXILIARY (proveedor externo). SECRETARY/SUPER_ADMIN administran; PARTNER consulta "
-                + "viajes de sus camiones; DRIVER consulta e inicia/completa sus viajes asignados")
+@Tag(name = "Journeys", description = "Viajes asociados a fletes")
 public class JourneyController {
 
     private final GetAllJourneysUseCase getAllJourneysUseCase;
@@ -46,55 +42,42 @@ public class JourneyController {
     private final UpdateJourneyStatusUseCase updateJourneyStatusUseCase;
 
     @GetMapping
-    @Operation(summary = "Lista los viajes visibles para el rol autenticado con filtros opcionales "
-            + "por contenedor, estado y modalidad")
+    @Operation(summary = "Lista los viajes con filtros opcionales por flete, asignación y estado")
     public JourneysResponse getAll(
-            @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
-            @Parameter(description = "Filtra por contenedor transportado") @RequestParam(required = false)
-            Long containerId,
-            @Parameter(description = "Filtra por estado del viaje") @RequestParam(required = false)
-            JourneyState state,
-            @Parameter(description = "Filtra por modalidad de ejecución") @RequestParam(required = false)
-            JourneyExecutionType executionType,
+            @Parameter(description = "Filtra por flete") @RequestParam(required = false) Long freightId,
+            @Parameter(description = "Filtra por asignación") @RequestParam(required = false) Long assignmentId,
+            @Parameter(description = "Filtra por estado del viaje") @RequestParam(required = false) JourneyState state,
             @PageableDefault(size = 20, sort = "journeyId") Pageable pageable) {
-        return getAllJourneysUseCase.execute(companyId, containerId, state, executionType, pageable);
+        return getAllJourneysUseCase.execute(freightId, assignmentId, state, pageable);
     }
 
     @GetMapping("/{journeyId}")
-    @Operation(summary = "Consulta un viaje por id dentro de la empresa según el alcance del rol")
+    @Operation(summary = "Consulta un viaje por id")
     public JourneyResponse getById(
-            @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
             @Parameter(description = "Identificador del viaje") @PathVariable Long journeyId) {
-        return getJourneyByIdUseCase.execute(companyId, journeyId);
+        return getJourneyByIdUseCase.execute(journeyId);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Crea un viaje PLANNED (SUPER_ADMIN o SECRETARY); "
-            + "PARTNER requiere assignmentId vigente, AUXILIARY requiere proveedor, placa, conductor y motivo")
-    public JourneyResponse create(
-            @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
-            @Valid @RequestBody JourneyRequest request) {
-        return saveJourneyUseCase.execute(companyId, request);
+    @Operation(summary = "Crea un viaje")
+    public JourneyResponse create(@Valid @RequestBody JourneyRequest request) {
+        return saveJourneyUseCase.execute(request);
     }
 
     @PutMapping("/{journeyId}")
-    @Operation(summary = "Actualiza los datos escalares de un viaje PLANNED sin cambiar modalidad ni estado")
+    @Operation(summary = "Actualiza los datos de un viaje sin cambiar su estado")
     public JourneyResponse update(
-            @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
             @Parameter(description = "Identificador del viaje") @PathVariable Long journeyId,
             @Valid @RequestBody JourneyUpdateRequest request) {
-        return updateJourneyUseCase.execute(companyId, journeyId, request);
+        return updateJourneyUseCase.execute(journeyId, request);
     }
 
     @PutMapping("/{journeyId}/status")
-    @Operation(summary = "Cambia el estado del viaje con transiciones estrictas "
-            + "(PLANNED->IN_PROGRESS->COMPLETED; CANCELLED desde PLANNED o IN_PROGRESS). "
-            + "DRIVER solo puede iniciar o completar sus viajes PARTNER asignados")
+    @Operation(summary = "Cambia el estado del viaje")
     public JourneyResponse updateStatus(
-            @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
             @Parameter(description = "Identificador del viaje") @PathVariable Long journeyId,
             @Valid @RequestBody JourneyStatusRequest request) {
-        return updateJourneyStatusUseCase.execute(companyId, journeyId, request);
+        return updateJourneyStatusUseCase.execute(journeyId, request);
     }
 }

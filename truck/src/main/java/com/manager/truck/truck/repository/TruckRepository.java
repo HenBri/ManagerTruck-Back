@@ -13,31 +13,24 @@ import java.util.Optional;
 
 public interface TruckRepository extends JpaRepository<Truck, Long> {
 
-    @Query("SELECT t FROM Truck t WHERE t.companyId = :companyId AND t.truckId = :truckId")
-    Optional<Truck> findByCompanyIdAndTruckId(@Param("companyId") Long companyId,
-                                              @Param("truckId") Long truckId);
+    @Query("SELECT t FROM Truck t WHERE t.truckId = :truckId AND t.isDelete = false")
+    Optional<Truck> findActiveById(@Param("truckId") Long truckId);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("SELECT t FROM Truck t WHERE t.companyId = :companyId AND t.truckId = :truckId")
-    Optional<Truck> findByCompanyIdAndTruckIdForUpdate(@Param("companyId") Long companyId,
-                                                       @Param("truckId") Long truckId);
+    @Query("SELECT t FROM Truck t WHERE t.truckId = :truckId AND t.isDelete = false")
+    Optional<Truck> findActiveByIdForUpdate(@Param("truckId") Long truckId);
 
-    @Query("SELECT t FROM Truck t WHERE t.companyId = :companyId")
-    Page<Truck> findByCompanyId(@Param("companyId") Long companyId, Pageable pageable);
+    @Query("SELECT t FROM Truck t WHERE t.isDelete = false")
+    Page<Truck> findAllActive(Pageable pageable);
 
-    @Query("SELECT t FROM Truck t WHERE t.companyId = :companyId AND t.ownerPartnerId = :ownerPartnerId")
-    Page<Truck> findByCompanyIdAndOwnerPartnerId(@Param("companyId") Long companyId,
-                                                 @Param("ownerPartnerId") Long ownerPartnerId,
-                                                 Pageable pageable);
+    @Query("SELECT t FROM Truck t WHERE t.ownerPartnerId = :ownerPartnerId AND t.isDelete = false")
+    Page<Truck> findByOwnerPartnerId(@Param("ownerPartnerId") Long ownerPartnerId, Pageable pageable);
 
-    @Query("SELECT CASE WHEN COUNT(t) > 0 THEN true ELSE false END FROM Truck t "
-            + "WHERE t.companyId = :companyId AND t.truckBoard = :truckBoard")
-    boolean existsByCompanyIdAndTruckBoard(@Param("companyId") Long companyId,
-                                           @Param("truckBoard") String truckBoard);
+    @Query("SELECT CASE WHEN COUNT(t) > 0 THEN true ELSE false END FROM Truck t " +
+            "WHERE t.truckBoard = :truckBoard AND t.isDelete = false")
+    boolean existsByTruckBoard(@Param("truckBoard") String truckBoard);
 
-    @Query("SELECT CASE WHEN COUNT(t) > 0 THEN true ELSE false END FROM Truck t "
-            + "WHERE t.companyId = :companyId AND t.truckBoard = :truckBoard AND t.truckId <> :truckId")
-    boolean existsByCompanyIdAndTruckBoardAndTruckIdNot(@Param("companyId") Long companyId,
-                                                        @Param("truckBoard") String truckBoard,
-                                                        @Param("truckId") Long truckId);
+    @Query("SELECT CASE WHEN COUNT(t) > 0 THEN true ELSE false END FROM Truck t " +
+            "WHERE t.truckBoard = :truckBoard AND t.truckId <> :truckId AND t.isDelete = false")
+    boolean existsByTruckBoardAndTruckIdNot(@Param("truckBoard") String truckBoard, @Param("truckId") Long truckId);
 }

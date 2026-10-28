@@ -2,7 +2,6 @@ package com.manager.truck.truck.service;
 
 import com.manager.truck.truck.domain.AuxiliaryProvider;
 import com.manager.truck.truck.domain.enums.AuxiliaryProviderKind;
-import com.manager.truck.truck.domain.enums.AuxiliaryProviderStatus;
 import com.manager.truck.truck.exception.ResourceNotFoundException;
 import com.manager.truck.truck.repository.AuxiliaryProviderRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,64 +15,51 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AuxiliaryProviderServiceImpl implements AuxiliaryProviderService {
 
-    private final AuxiliaryProviderRepository auxiliaryProviderRepository;
+    private final AuxiliaryProviderRepository providerRepository;
 
     @Override
     public AuxiliaryProvider save(AuxiliaryProvider provider) {
-        return auxiliaryProviderRepository.save(provider);
+        return providerRepository.save(provider);
     }
 
     @Override
-    public AuxiliaryProvider findByCompanyIdAndProviderId(Long companyId, Long providerId) {
-        return auxiliaryProviderRepository.findByCompanyIdAndProviderId(companyId, providerId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Proveedor de auxilio no encontrado con el id " + providerId + " en la empresa " + companyId));
+    public AuxiliaryProvider update(AuxiliaryProvider provider) {
+        return providerRepository.save(provider);
     }
 
     @Override
-    public Optional<AuxiliaryProvider> findOptionalByCompanyIdAndProviderId(Long companyId, Long providerId) {
-        return auxiliaryProviderRepository.findByCompanyIdAndProviderId(companyId, providerId);
+    public AuxiliaryProvider findById(Long providerId) {
+        return providerRepository.findActiveById(providerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Proveedor no encontrado con id " + providerId));
     }
 
     @Override
-    public Page<AuxiliaryProvider> findByCompanyId(Long companyId, Pageable pageable) {
-        return auxiliaryProviderRepository.findByCompanyId(companyId, pageable);
+    public Optional<AuxiliaryProvider> findOptionalById(Long providerId) {
+        return providerRepository.findActiveById(providerId);
     }
 
     @Override
-    public Page<AuxiliaryProvider> findByCompanyIdAndProviderKind(Long companyId, AuxiliaryProviderKind kind,
-                                                                  Pageable pageable) {
-        return auxiliaryProviderRepository.findByCompanyIdAndProviderKind(companyId, kind, pageable);
+    public boolean existsByProviderName(String providerName) {
+        return providerRepository.existsByProviderName(providerName);
     }
 
     @Override
-    public Page<AuxiliaryProvider> findByCompanyIdAndProviderStatus(Long companyId, AuxiliaryProviderStatus status,
-                                                                    Pageable pageable) {
-        return auxiliaryProviderRepository.findByCompanyIdAndProviderStatus(companyId, status, pageable);
+    public boolean existsByProviderNameAndProviderIdNot(String providerName, Long providerId) {
+        return providerRepository.existsByProviderNameAndProviderIdNot(providerName, providerId);
     }
 
     @Override
-    public Page<AuxiliaryProvider> findByCompanyIdAndProviderKindAndProviderStatus(Long companyId,
-                                                                                   AuxiliaryProviderKind kind,
-                                                                                   AuxiliaryProviderStatus status,
-                                                                                   Pageable pageable) {
-        return auxiliaryProviderRepository.findByCompanyIdAndProviderKindAndProviderStatus(
-                companyId, kind, status, pageable);
+    public Page<AuxiliaryProvider> findAll(Pageable pageable) {
+        return providerRepository.findAllActive(pageable);
     }
 
     @Override
-    public Page<AuxiliaryProvider> findByCompanyIdAndProviderNameContains(Long companyId, String name,
-                                                                          Pageable pageable) {
-        return auxiliaryProviderRepository.findByCompanyIdAndProviderNameContains(companyId, name, pageable);
+    public Page<AuxiliaryProvider> findByProviderKind(AuxiliaryProviderKind kind, Pageable pageable) {
+        return providerRepository.findByProviderKind(kind, pageable);
     }
 
     @Override
-    public boolean existsByCompanyIdAndProviderName(Long companyId, String providerName) {
-        return auxiliaryProviderRepository.existsByCompanyIdAndProviderName(companyId, providerName);
-    }
-
-    @Override
-    public boolean existsByCompanyIdAndProviderNameNot(Long companyId, String providerName, Long providerId) {
-        return auxiliaryProviderRepository.existsByCompanyIdAndProviderNameNot(companyId, providerName, providerId);
+    public Page<AuxiliaryProvider> findByProviderNameContains(String name, Pageable pageable) {
+        return providerRepository.findByProviderNameContains(name, pageable);
     }
 }

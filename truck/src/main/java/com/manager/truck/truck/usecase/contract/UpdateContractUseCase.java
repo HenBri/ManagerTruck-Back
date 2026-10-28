@@ -4,7 +4,6 @@ import com.manager.truck.truck.domain.Contract;
 import com.manager.truck.truck.domain.dto.request.ContractUpdateRequest;
 import com.manager.truck.truck.domain.dto.response.ContractResponse;
 import com.manager.truck.truck.security.CurrentUserProvider;
-import com.manager.truck.truck.service.CompanyService;
 import com.manager.truck.truck.service.ContractService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,19 +14,27 @@ import org.springframework.transaction.annotation.Transactional;
 public class UpdateContractUseCase {
 
     private final ContractService contractService;
-    private final CompanyService companyService;
     private final CurrentUserProvider currentUserProvider;
 
     @Transactional
-    public ContractResponse execute(Long companyId, Long contractId, ContractUpdateRequest request) {
-        currentUserProvider.requireCompanyAdmin(companyId);
-        companyService.findById(companyId);
-        Contract contract = contractService.findByCompanyIdAndContractId(companyId, contractId);
-        contract.setContractAmount(request.getContractAmount());
-        contract.setContractDate(request.getContractDate());
-        contract.setContractDescription(request.getContractDescription());
-        contract.setContractType(request.getContractType());
-        Contract saved = contractService.save(contract);
+    public ContractResponse execute(Long contractId, ContractUpdateRequest request) {
+        currentUserProvider.requireAdminOrSecretary();
+        Contract contract = contractService.findById(contractId);
+        if (request.getOperationType() != null) contract.setOperationType(request.getOperationType());
+        if (request.getOriginLocation() != null) contract.setOriginLocation(request.getOriginLocation());
+        if (request.getDestinationLocation() != null) contract.setDestinationLocation(request.getDestinationLocation());
+        if (request.getExpectedStartDate() != null) contract.setExpectedStartDate(request.getExpectedStartDate());
+        if (request.getExpectedDeliveryDate() != null) contract.setExpectedDeliveryDate(request.getExpectedDeliveryDate());
+        if (request.getActualDeliveryDate() != null) contract.setActualDeliveryDate(request.getActualDeliveryDate());
+        if (request.getReferenceDocument() != null) contract.setReferenceDocument(request.getReferenceDocument());
+        if (request.getDeclaredTotalWeightKg() != null) contract.setDeclaredTotalWeightKg(request.getDeclaredTotalWeightKg());
+        if (request.getExpectedContainerCount() != null) contract.setExpectedContainerCount(request.getExpectedContainerCount());
+        if (request.getObservations() != null) contract.setObservations(request.getObservations());
+        if (request.getContractAmount() != null) contract.setContractAmount(request.getContractAmount());
+        if (request.getContractDate() != null) contract.setContractDate(request.getContractDate());
+        if (request.getContractDescription() != null) contract.setContractDescription(request.getContractDescription());
+        if (request.getContractType() != null) contract.setContractType(request.getContractType());
+        Contract saved = contractService.update(contract);
         return ContractResponse.from(saved);
     }
 }

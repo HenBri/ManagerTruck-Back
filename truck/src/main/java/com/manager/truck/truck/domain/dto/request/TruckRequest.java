@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -38,4 +39,26 @@ public class TruckRequest {
     @DecimalMin(value = "0")
     @Digits(integer = 9, fraction = 3)
     private BigDecimal truckCapacity;
+
+    @DecimalMin(value = "0")
+    @Digits(integer = 9, fraction = 3)
+    private BigDecimal truckEmptyWeightKg;
+
+    @DecimalMin(value = "0")
+    @Digits(integer = 9, fraction = 3)
+    private BigDecimal trailerEmptyWeightKg;
+
+    @DecimalMin(value = "0")
+    @Digits(integer = 9, fraction = 3)
+    private BigDecimal maxGrossWeightKg;
+
+    @Size(max = 50)
+    private String truckType;
+
+    @Size(max = 20)
+    private String chassisPlate;
+
+    private LocalDate insuranceExpiration;
+
+    private LocalDate technicalInspectionExpiration;
 }

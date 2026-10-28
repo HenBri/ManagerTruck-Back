@@ -28,10 +28,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/companies/{companyId}/drivers")
+@RequestMapping("/api/drivers")
 @RequiredArgsConstructor
-@Tag(name = "Drivers", description = "Conductores por empresa; "
-        + "SECRETARY administra, DRIVER/PARTNER consultan solo su información")
+@Tag(name = "Drivers", description = "Conductores de la empresa. ADMIN/SECRETARY administran, DRIVER/PARTNER consultan")
 public class DriverController {
 
     private final GetAllDriversUseCase getAllDriversUseCase;
@@ -41,49 +40,38 @@ public class DriverController {
     private final UpdateDriverStatusUseCase updateDriverStatusUseCase;
 
     @GetMapping
-    @Operation(summary = "Lista los conductores de una empresa; SECRETARY/SUPER_ADMIN ven todos, "
-            + "DRIVER/PARTNER solo su propio registro")
-    public DriversResponse getAll(
-            @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
-            @PageableDefault(size = 20, sort = "driverId") Pageable pageable) {
-        return getAllDriversUseCase.execute(companyId, pageable);
+    @Operation(summary = "Lista los conductores; ADMIN/SECRETARY ven todos, DRIVER solo su propio registro")
+    public DriversResponse getAll(@PageableDefault(size = 20, sort = "driverId") Pageable pageable) {
+        return getAllDriversUseCase.execute(pageable);
     }
 
     @GetMapping("/{driverId}")
-    @Operation(summary = "Consulta un conductor por id dentro de la empresa; "
-            + "no administradores solo su propio registro")
+    @Operation(summary = "Consulta un conductor por id")
     public DriverResponse getById(
-            @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
             @Parameter(description = "Identificador del conductor") @PathVariable Long driverId) {
-        return getDriverByIdUseCase.execute(companyId, driverId);
+        return getDriverByIdUseCase.execute(driverId);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Crea un conductor con cuenta, membresía y rol DRIVER "
-            + "(SUPER_ADMIN o SECRETARY de esa empresa); valida licencia y vínculo socio-persona")
-    public DriverResponse create(
-            @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
-            @Valid @RequestBody DriverRequest request) {
-        return saveDriverUseCase.execute(companyId, request);
+    @Operation(summary = "Crea un conductor")
+    public DriverResponse create(@Valid @RequestBody DriverRequest request) {
+        return saveDriverUseCase.execute(request);
     }
 
     @PutMapping("/{driverId}")
-    @Operation(summary = "Actualiza los datos escalares de un conductor incluyendo licencia "
-            + "(SUPER_ADMIN o SECRETARY de esa empresa)")
+    @Operation(summary = "Actualiza los datos de un conductor")
     public DriverResponse update(
-            @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
             @Parameter(description = "Identificador del conductor") @PathVariable Long driverId,
             @Valid @RequestBody DriverUpdateRequest request) {
-        return updateDriverUseCase.execute(companyId, driverId, request);
+        return updateDriverUseCase.execute(driverId, request);
     }
 
     @PutMapping("/{driverId}/status")
-    @Operation(summary = "Activa o desactiva un conductor (SUPER_ADMIN o SECRETARY de esa empresa)")
+    @Operation(summary = "Activa o desactiva un conductor")
     public DriverResponse updateStatus(
-            @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
             @Parameter(description = "Identificador del conductor") @PathVariable Long driverId,
             @Valid @RequestBody DriverStatusRequest request) {
-        return updateDriverStatusUseCase.execute(companyId, driverId, request);
+        return updateDriverStatusUseCase.execute(driverId, request);
     }
 }

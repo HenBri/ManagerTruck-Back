@@ -1,18 +1,17 @@
 package com.manager.truck.truck.domain;
 
-import com.manager.truck.truck.domain.enums.DriverStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 
 @Getter
 @Setter
@@ -22,37 +21,30 @@ public class Driver {
 
     @Id
     @Column(name = Constants.DriverTable.Id.NAME, nullable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long driverId;
-
-    @Column(name = Constants.DriverTable.CompanyId.NAME, nullable = false)
-    private Long companyId;
-
-    @Column(name = Constants.DriverTable.UserId.NAME)
-    private Long userId;
-
-    @Column(name = Constants.DriverTable.PersonPartnerId.NAME)
-    private Long personPartnerId;
-
-    @Column(name = Constants.DriverTable.Name.NAME, length = Constants.DriverTable.Name.LENGTH, nullable = false)
-    private String driverName;
-
-    @Column(name = Constants.DriverTable.Ci.NAME, length = Constants.DriverTable.Ci.LENGTH)
-    private String driverCi;
-
-    @Column(name = Constants.DriverTable.Phone.NAME, length = Constants.DriverTable.Phone.LENGTH)
-    private String driverPhone;
 
     @Column(name = Constants.DriverTable.License.NAME, length = Constants.DriverTable.License.LENGTH, nullable = false)
     private String driverLicense;
 
-    @Column(name = Constants.DriverTable.LicenseCategory.NAME, length = Constants.DriverTable.LicenseCategory.LENGTH)
+    @Column(name = Constants.DriverTable.LicenseCategory.NAME, length = Constants.DriverTable.LicenseCategory.LENGTH, nullable = false)
     private String licenseCategory;
 
     @Column(name = Constants.DriverTable.LicenseExpiration.NAME)
     private LocalDate licenseExpiration;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = Constants.DriverTable.State.NAME, nullable = false)
-    private DriverStatus driverState;
+    @Column(name = Constants.DriverTable.DateCreate.NAME, insertable = false, updatable = false)
+    private OffsetDateTime dateCreate;
+
+    @Column(name = Constants.DriverTable.DateUpdate.NAME, insertable = false, updatable = false)
+    private OffsetDateTime dateUpdate;
+
+    @Column(name = Constants.DriverTable.IsDelete.NAME, nullable = false)
+    private Boolean isDelete = false;
+
+    @Column(name = Constants.DriverTable.State.NAME, length = Constants.DriverTable.State.LENGTH, nullable = false)
+    private String state = "ACTIVE";
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = Constants.DriverTable.Id.NAME, insertable = false, updatable = false)
+    private Person person;
 }

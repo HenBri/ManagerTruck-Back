@@ -10,15 +10,15 @@ public interface DriverService {
 
     Driver save(Driver driver);
 
-    Driver findByCompanyIdAndDriverId(Long companyId, Long driverId);
+    Driver update(Driver driver);
 
-    Driver findByCompanyIdAndDriverIdForUpdate(Long companyId, Long driverId);
+    Driver findById(Long driverId);
 
-    Optional<Driver> findByCompanyIdAndUserId(Long companyId, Long userId);
+    Optional<Driver> findOptionalById(Long driverId);
 
-    boolean existsByCompanyIdAndUserId(Long companyId, Long userId);
+    boolean existsByDriverLicense(String driverLicense);
 
-    boolean existsByCompanyIdAndPersonPartnerId(Long companyId, Long personPartnerId);
+    boolean existsByDriverLicenseAndDriverIdNot(String driverLicense, Long driverId);
 
-    Page<Driver> findByCompanyId(Long companyId, Pageable pageable);
+    Page<Driver> findAll(Pageable pageable);
 }

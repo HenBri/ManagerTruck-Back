@@ -4,7 +4,6 @@ import com.manager.truck.truck.domain.AuxiliaryProvider;
 import com.manager.truck.truck.domain.dto.response.AuxiliaryProviderResponse;
 import com.manager.truck.truck.security.CurrentUserProvider;
 import com.manager.truck.truck.service.AuxiliaryProviderService;
-import com.manager.truck.truck.service.CompanyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,14 +13,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class GetAuxiliaryProviderByIdUseCase {
 
     private final AuxiliaryProviderService auxiliaryProviderService;
-    private final CompanyService companyService;
     private final CurrentUserProvider currentUserProvider;
 
     @Transactional(readOnly = true)
-    public AuxiliaryProviderResponse execute(Long companyId, Long providerId) {
-        currentUserProvider.requireCompanyAdmin(companyId);
-        companyService.findById(companyId);
-        AuxiliaryProvider provider = auxiliaryProviderService.findByCompanyIdAndProviderId(companyId, providerId);
+    public AuxiliaryProviderResponse execute(Long providerId) {
+        currentUserProvider.requireAdminOrSecretary();
+        AuxiliaryProvider provider = auxiliaryProviderService.findById(providerId);
         return AuxiliaryProviderResponse.from(provider);
     }
 }

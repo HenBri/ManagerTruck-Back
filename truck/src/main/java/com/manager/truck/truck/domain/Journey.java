@@ -1,7 +1,5 @@
 package com.manager.truck.truck.domain;
 
-import com.manager.truck.truck.domain.enums.AuxiliaryReason;
-import com.manager.truck.truck.domain.enums.JourneyExecutionType;
 import com.manager.truck.truck.domain.enums.JourneyState;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,7 +13,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Getter
 @Setter
@@ -28,69 +26,70 @@ public class Journey {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long journeyId;
 
-    @Column(name = Constants.JourneyTable.CompanyId.NAME, nullable = false)
-    private Long companyId;
+    @Column(name = Constants.JourneyTable.FreightId.NAME, nullable = false, unique = true)
+    private Long freightId;
 
-    @Column(name = Constants.JourneyTable.ContainerId.NAME, nullable = false)
-    private Long containerId;
-
-    @Column(name = Constants.JourneyTable.Origin.NAME,
-            length = Constants.JourneyTable.Origin.LENGTH, nullable = false)
+    @Column(name = Constants.JourneyTable.Origin.NAME, length = Constants.JourneyTable.Origin.LENGTH, nullable = false)
     private String journeyOrigin;
 
-    @Column(name = Constants.JourneyTable.Destination.NAME,
-            length = Constants.JourneyTable.Destination.LENGTH, nullable = false)
+    @Column(name = Constants.JourneyTable.Destination.NAME, length = Constants.JourneyTable.Destination.LENGTH, nullable = false)
     private String journeyDestination;
 
     @Column(name = Constants.JourneyTable.StartDate.NAME)
-    private LocalDateTime journeyStartDate;
+    private OffsetDateTime journeyStartDate;
 
     @Column(name = Constants.JourneyTable.EndDate.NAME)
-    private LocalDateTime journeyEndDate;
+    private OffsetDateTime journeyEndDate;
 
-    @Column(name = Constants.JourneyTable.Description.NAME,
-            length = Constants.JourneyTable.Description.LENGTH)
+    @Column(name = Constants.JourneyTable.Description.NAME, length = Constants.JourneyTable.Description.LENGTH)
     private String journeyDescription;
 
-    @Column(name = Constants.JourneyTable.Type.NAME,
-            length = Constants.JourneyTable.Type.LENGTH)
+    @Column(name = Constants.JourneyTable.Type.NAME, length = Constants.JourneyTable.Type.LENGTH)
     private String journeyType;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = Constants.JourneyTable.State.NAME, nullable = false)
-    private JourneyState journeyState;
+    @Column(name = Constants.JourneyTable.PlannedStartDate.NAME)
+    private OffsetDateTime plannedStartDate;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = Constants.JourneyTable.ExecutionType.NAME, nullable = false)
-    private JourneyExecutionType executionType;
+    @Column(name = Constants.JourneyTable.PlannedEndDate.NAME)
+    private OffsetDateTime plannedEndDate;
+
+    @Column(name = Constants.JourneyTable.DeliveryConfirmedAt.NAME)
+    private OffsetDateTime deliveryConfirmedAt;
+
+    @Column(name = Constants.JourneyTable.RecipientName.NAME, length = Constants.JourneyTable.RecipientName.LENGTH)
+    private String recipientName;
+
+    @Column(name = Constants.JourneyTable.ProofOfDeliveryReference.NAME, length = Constants.JourneyTable.ProofOfDeliveryReference.LENGTH)
+    private String proofOfDeliveryReference;
+
+    @Column(name = Constants.JourneyTable.Observations.NAME, columnDefinition = "TEXT")
+    private String observations;
 
     @Column(name = Constants.JourneyTable.AssignmentId.NAME)
     private Long assignmentId;
 
-    @Column(name = Constants.JourneyTable.AuxiliaryProviderId.NAME)
-    private Long auxiliaryProviderId;
-
-    @Column(name = Constants.JourneyTable.AuxiliaryTruckPlate.NAME,
-            length = Constants.JourneyTable.AuxiliaryTruckPlate.LENGTH)
-    private String auxiliaryTruckPlate;
-
-    @Column(name = Constants.JourneyTable.AuxiliaryDriverName.NAME,
-            length = Constants.JourneyTable.AuxiliaryDriverName.LENGTH)
+    @Column(name = Constants.JourneyTable.AuxiliaryDriverName.NAME, length = Constants.JourneyTable.AuxiliaryDriverName.LENGTH)
     private String auxiliaryDriverName;
 
-    @Column(name = Constants.JourneyTable.AuxiliaryDriverLicense.NAME,
-            length = Constants.JourneyTable.AuxiliaryDriverLicense.LENGTH)
+    @Column(name = Constants.JourneyTable.AuxiliaryDriverLicense.NAME, length = Constants.JourneyTable.AuxiliaryDriverLicense.LENGTH)
     private String auxiliaryDriverLicense;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = Constants.JourneyTable.AuxiliaryReason.NAME)
-    private AuxiliaryReason auxiliaryReason;
+    @Column(name = Constants.JourneyTable.AuxiliaryReason.NAME, length = Constants.JourneyTable.AuxiliaryReason.LENGTH)
+    private String auxiliaryReason;
 
-    @Column(name = Constants.JourneyTable.AgreedAmount.NAME,
-            precision = Constants.JourneyTable.AgreedAmount.PRECISION,
-            scale = Constants.JourneyTable.AgreedAmount.SCALE)
+    @Column(name = Constants.JourneyTable.AgreedAmount.NAME, precision = Constants.JourneyTable.AgreedAmount.PRECISION, scale = Constants.JourneyTable.AgreedAmount.SCALE)
     private BigDecimal agreedAmount;
 
-    @Column(name = Constants.JourneyTable.CreatedAt.NAME, insertable = false, updatable = false)
-    private LocalDateTime createdAt;
+    @Column(name = Constants.JourneyTable.DateCreate.NAME, insertable = false, updatable = false)
+    private OffsetDateTime dateCreate;
+
+    @Column(name = Constants.JourneyTable.DateUpdate.NAME, insertable = false, updatable = false)
+    private OffsetDateTime dateUpdate;
+
+    @Column(name = Constants.JourneyTable.IsDelete.NAME, nullable = false)
+    private Boolean isDelete = false;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = Constants.JourneyTable.State.NAME, length = Constants.JourneyTable.State.LENGTH, nullable = false)
+    private JourneyState state = JourneyState.PENDIENTE;
 }

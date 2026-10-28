@@ -10,11 +10,15 @@ public interface ClientService {
 
     Client save(Client client);
 
-    Client findByCompanyIdAndClientId(Long companyId, Long clientId);
+    Client update(Client client);
 
-    Optional<Client> findOptionalByCompanyIdAndClientId(Long companyId, Long clientId);
+    Client findById(Long clientId);
 
-    Page<Client> findByCompanyId(Long companyId, Pageable pageable);
+    Optional<Client> findOptionalById(Long clientId);
 
-    Page<Client> findByCompanyIdAndClientState(Long companyId, Boolean clientState, Pageable pageable);
+    boolean existsByClientName(String clientName);
+
+    boolean existsByClientNameAndClientIdNot(String clientName, Long clientId);
+
+    Page<Client> findAll(Pageable pageable);
 }

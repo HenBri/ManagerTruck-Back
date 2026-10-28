@@ -4,7 +4,7 @@ import com.manager.truck.truck.domain.Role;
 import com.manager.truck.truck.exception.ResourceNotFoundException;
 import com.manager.truck.truck.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,7 +22,7 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public Role findById(Integer roleId) {
-        return roleRepository.findById(roleId)
+        return roleRepository.findActiveById(roleId)
                 .orElseThrow(() -> new ResourceNotFoundException("Rol no encontrado: " + roleId));
     }
 
@@ -39,7 +39,7 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public List<Role> findAll() {
-        return roleRepository.findAll(Sort.by(Sort.Direction.ASC, "roleId"));
+        return roleRepository.findAllActive(Pageable.unpaged()).getContent();
     }
 
     @Override

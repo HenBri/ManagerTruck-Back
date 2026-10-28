@@ -30,4 +30,33 @@ public class ContainerRequest {
 
     @Size(max = 50)
     private String containerType;
+
+    @Size(max = 10)
+    private String isoSize;
+
+    @Size(max = 25)
+    private String containerFormat;
+
+    @Size(max = 50)
+    private String sealNumber;
+
+    @DecimalMin(value = "0")
+    @Digits(integer = 9, fraction = 3)
+    private BigDecimal grossWeightKg;
+
+    @DecimalMin(value = "0")
+    @Digits(integer = 9, fraction = 3)
+    private BigDecimal tareWeightKg;
+
+    @DecimalMin(value = "0")
+    @Digits(integer = 9, fraction = 3)
+    private BigDecimal cargoWeightKg;
+
+    @Size(max = 120)
+    private String shippingLine;
+
+    @Size(max = 80)
+    private String customsReference;
+
+    private BigDecimal temperatureC;
 }

@@ -5,39 +5,58 @@ public final class Constants {
     private Constants() {
     }
 
-    public static final class CompanyTable {
-        public static final String NAME = "company";
+    public static final class PersonTable {
+        public static final String NAME = "person";
 
         public static final class Id {
-            public static final String NAME = "company_id";
+            public static final String NAME = "person_id";
         }
 
-        public static final class Name {
-            public static final String NAME = "company_name";
-            public static final int LENGTH = 150;
+        public static final class FirstName {
+            public static final String NAME = "first_name";
+            public static final int LENGTH = 100;
         }
 
-        public static final class Nit {
-            public static final String NAME = "company_nit";
-            public static final int LENGTH = 30;
+        public static final class LastName {
+            public static final String NAME = "last_name";
+            public static final int LENGTH = 100;
         }
 
-        public static final class Address {
-            public static final String NAME = "company_address";
+        public static final class MaternalLastName {
+            public static final String NAME = "maternal_last_name";
+            public static final int LENGTH = 100;
+        }
+
+        public static final class Email {
+            public static final String NAME = "email";
             public static final int LENGTH = 255;
         }
 
         public static final class Phone {
-            public static final String NAME = "company_phone";
+            public static final String NAME = "phone";
             public static final int LENGTH = 25;
         }
 
-        public static final class Status {
-            public static final String NAME = "company_status";
+        public static final class DocumentNumber {
+            public static final String NAME = "document_number";
+            public static final int LENGTH = 30;
         }
 
-        public static final class CreatedAt {
-            public static final String NAME = "company_created_at";
+        public static final class DateCreate {
+            public static final String NAME = "date_create";
+        }
+
+        public static final class DateUpdate {
+            public static final String NAME = "date_update";
+        }
+
+        public static final class IsDelete {
+            public static final String NAME = "is_delete";
+        }
+
+        public static final class State {
+            public static final String NAME = "state";
+            public static final int LENGTH = 20;
         }
     }
 
@@ -48,9 +67,8 @@ public final class Constants {
             public static final String NAME = "user_id";
         }
 
-        public static final class Email {
-            public static final String NAME = "user_email";
-            public static final int LENGTH = 255;
+        public static final class PersonId {
+            public static final String NAME = "person_id";
         }
 
         public static final class PasswordHash {
@@ -58,32 +76,21 @@ public final class Constants {
             public static final int LENGTH = 255;
         }
 
-        public static final class Name {
-            public static final String NAME = "user_name";
-            public static final int LENGTH = 100;
+        public static final class DateCreate {
+            public static final String NAME = "date_create";
         }
 
-        public static final class Lastname {
-            public static final String NAME = "user_lastname";
-            public static final int LENGTH = 150;
+        public static final class DateUpdate {
+            public static final String NAME = "date_update";
         }
 
-        public static final class Ci {
-            public static final String NAME = "user_ci";
-            public static final int LENGTH = 30;
+        public static final class IsDelete {
+            public static final String NAME = "is_delete";
         }
 
-        public static final class Phone {
-            public static final String NAME = "user_phone";
-            public static final int LENGTH = 25;
-        }
-
-        public static final class Status {
-            public static final String NAME = "user_status";
-        }
-
-        public static final class CreatedAt {
-            public static final String NAME = "user_created_at";
+        public static final class State {
+            public static final String NAME = "state";
+            public static final int LENGTH = 20;
         }
     }
 
@@ -99,42 +106,31 @@ public final class Constants {
             public static final int LENGTH = 50;
         }
 
-        public static final class Scope {
-            public static final String NAME = "role_scope";
-        }
-
         public static final class Description {
             public static final String NAME = "role_description";
             public static final int LENGTH = 255;
         }
-    }
 
-    public static final class CompanyUserTable {
-        public static final String NAME = "company_user";
-
-        public static final class CompanyId {
-            public static final String NAME = "company_id";
+        public static final class DateCreate {
+            public static final String NAME = "date_create";
         }
 
-        public static final class UserId {
-            public static final String NAME = "user_id";
+        public static final class DateUpdate {
+            public static final String NAME = "date_update";
         }
 
-        public static final class MembershipStatus {
-            public static final String NAME = "membership_status";
+        public static final class IsDelete {
+            public static final String NAME = "is_delete";
         }
 
-        public static final class JoinedAt {
-            public static final String NAME = "joined_at";
+        public static final class State {
+            public static final String NAME = "state";
+            public static final int LENGTH = 20;
         }
     }
 
-    public static final class CompanyUserRoleTable {
-        public static final String NAME = "company_user_role";
-
-        public static final class CompanyId {
-            public static final String NAME = "company_id";
-        }
+    public static final class UserRoleTable {
+        public static final String NAME = "user_role";
 
         public static final class UserId {
             public static final String NAME = "user_id";
@@ -142,30 +138,91 @@ public final class Constants {
 
         public static final class RoleId {
             public static final String NAME = "role_id";
-        }
-
-        public static final class RoleScope {
-            public static final String NAME = "role_scope";
-        }
-    }
-
-    public static final class PlatformUserRoleTable {
-        public static final String NAME = "platform_user_role";
-
-        public static final class UserId {
-            public static final String NAME = "user_id";
-        }
-
-        public static final class RoleId {
-            public static final String NAME = "role_id";
-        }
-
-        public static final class RoleScope {
-            public static final String NAME = "role_scope";
         }
 
         public static final class GrantedAt {
             public static final String NAME = "granted_at";
+        }
+
+        public static final class DateCreate {
+            public static final String NAME = "date_create";
+        }
+
+        public static final class DateUpdate {
+            public static final String NAME = "date_update";
+        }
+
+        public static final class IsDelete {
+            public static final String NAME = "is_delete";
+        }
+
+        public static final class State {
+            public static final String NAME = "state";
+            public static final int LENGTH = 20;
+        }
+    }
+
+    public static final class PermissionTable {
+        public static final String NAME = "permission_table";
+
+        public static final class Id {
+            public static final String NAME = "permission_id";
+        }
+
+        public static final class Code {
+            public static final String NAME = "permission_code";
+            public static final int LENGTH = 80;
+        }
+
+        public static final class Description {
+            public static final String NAME = "description";
+            public static final int LENGTH = 255;
+        }
+
+        public static final class DateCreate {
+            public static final String NAME = "date_create";
+        }
+
+        public static final class DateUpdate {
+            public static final String NAME = "date_update";
+        }
+
+        public static final class IsDelete {
+            public static final String NAME = "is_delete";
+        }
+
+        public static final class State {
+            public static final String NAME = "state";
+            public static final int LENGTH = 20;
+        }
+    }
+
+    public static final class RolePermissionTable {
+        public static final String NAME = "role_permission";
+
+        public static final class RoleId {
+            public static final String NAME = "role_id";
+        }
+
+        public static final class PermissionId {
+            public static final String NAME = "permission_id";
+        }
+
+        public static final class DateCreate {
+            public static final String NAME = "date_create";
+        }
+
+        public static final class DateUpdate {
+            public static final String NAME = "date_update";
+        }
+
+        public static final class IsDelete {
+            public static final String NAME = "is_delete";
+        }
+
+        public static final class State {
+            public static final String NAME = "state";
+            public static final int LENGTH = 20;
         }
     }
 
@@ -176,35 +233,26 @@ public final class Constants {
             public static final String NAME = "partner_id";
         }
 
-        public static final class CompanyId {
-            public static final String NAME = "company_id";
-        }
-
-        public static final class UserId {
-            public static final String NAME = "user_id";
-        }
-
         public static final class Type {
             public static final String NAME = "partner_type";
+            public static final int LENGTH = 8;
         }
 
-        public static final class Name {
-            public static final String NAME = "partner_name";
-            public static final int LENGTH = 150;
+        public static final class DateCreate {
+            public static final String NAME = "date_create";
         }
 
-        public static final class Document {
-            public static final String NAME = "partner_document";
-            public static final int LENGTH = 30;
+        public static final class DateUpdate {
+            public static final String NAME = "date_update";
         }
 
-        public static final class Phone {
-            public static final String NAME = "partner_phone";
-            public static final int LENGTH = 25;
+        public static final class IsDelete {
+            public static final String NAME = "is_delete";
         }
 
         public static final class State {
-            public static final String NAME = "partner_state";
+            public static final String NAME = "state";
+            public static final int LENGTH = 20;
         }
     }
 
@@ -213,33 +261,6 @@ public final class Constants {
 
         public static final class Id {
             public static final String NAME = "driver_id";
-        }
-
-        public static final class CompanyId {
-            public static final String NAME = "company_id";
-        }
-
-        public static final class UserId {
-            public static final String NAME = "user_id";
-        }
-
-        public static final class PersonPartnerId {
-            public static final String NAME = "person_partner_id";
-        }
-
-        public static final class Name {
-            public static final String NAME = "driver_name";
-            public static final int LENGTH = 150;
-        }
-
-        public static final class Ci {
-            public static final String NAME = "driver_ci";
-            public static final int LENGTH = 30;
-        }
-
-        public static final class Phone {
-            public static final String NAME = "driver_phone";
-            public static final int LENGTH = 25;
         }
 
         public static final class License {
@@ -256,8 +277,21 @@ public final class Constants {
             public static final String NAME = "license_expiration";
         }
 
+        public static final class DateCreate {
+            public static final String NAME = "date_create";
+        }
+
+        public static final class DateUpdate {
+            public static final String NAME = "date_update";
+        }
+
+        public static final class IsDelete {
+            public static final String NAME = "is_delete";
+        }
+
         public static final class State {
-            public static final String NAME = "driver_state";
+            public static final String NAME = "state";
+            public static final int LENGTH = 20;
         }
     }
 
@@ -266,10 +300,6 @@ public final class Constants {
 
         public static final class Id {
             public static final String NAME = "truck_id";
-        }
-
-        public static final class CompanyId {
-            public static final String NAME = "company_id";
         }
 
         public static final class OwnerPartnerId {
@@ -311,12 +341,98 @@ public final class Constants {
             public static final int SCALE = 3;
         }
 
-        public static final class State {
-            public static final String NAME = "truck_state";
+        public static final class EmptyWeight {
+            public static final String NAME = "truck_empty_weight_kg";
+            public static final int PRECISION = 12;
+            public static final int SCALE = 3;
         }
 
-        public static final class CreateDate {
-            public static final String NAME = "truck_create_date";
+        public static final class TrailerEmptyWeight {
+            public static final String NAME = "trailer_empty_weight_kg";
+            public static final int PRECISION = 12;
+            public static final int SCALE = 3;
+        }
+
+        public static final class MaxGrossWeight {
+            public static final String NAME = "max_gross_weight_kg";
+            public static final int PRECISION = 12;
+            public static final int SCALE = 3;
+        }
+
+        public static final class Type {
+            public static final String NAME = "truck_type";
+            public static final int LENGTH = 50;
+        }
+
+        public static final class ChassisPlate {
+            public static final String NAME = "chassis_plate";
+            public static final int LENGTH = 20;
+        }
+
+        public static final class InsuranceExpiration {
+            public static final String NAME = "insurance_expiration";
+        }
+
+        public static final class TechnicalInspectionExpiration {
+            public static final String NAME = "technical_inspection_expiration";
+        }
+
+        public static final class DateCreate {
+            public static final String NAME = "date_create";
+        }
+
+        public static final class DateUpdate {
+            public static final String NAME = "date_update";
+        }
+
+        public static final class IsDelete {
+            public static final String NAME = "is_delete";
+        }
+
+        public static final class State {
+            public static final String NAME = "state";
+            public static final int LENGTH = 20;
+        }
+    }
+
+    public static final class TruckDriverAssignmentTable {
+        public static final String NAME = "truck_driver_assignment";
+
+        public static final class Id {
+            public static final String NAME = "assignment_id";
+        }
+
+        public static final class TruckId {
+            public static final String NAME = "truck_id";
+        }
+
+        public static final class DriverId {
+            public static final String NAME = "driver_id";
+        }
+
+        public static final class AssignedFrom {
+            public static final String NAME = "assigned_from";
+        }
+
+        public static final class AssignedUntil {
+            public static final String NAME = "assigned_until";
+        }
+
+        public static final class DateCreate {
+            public static final String NAME = "date_create";
+        }
+
+        public static final class DateUpdate {
+            public static final String NAME = "date_update";
+        }
+
+        public static final class IsDelete {
+            public static final String NAME = "is_delete";
+        }
+
+        public static final class State {
+            public static final String NAME = "state";
+            public static final int LENGTH = 20;
         }
     }
 
@@ -325,10 +441,6 @@ public final class Constants {
 
         public static final class Id {
             public static final String NAME = "client_id";
-        }
-
-        public static final class CompanyId {
-            public static final String NAME = "company_id";
         }
 
         public static final class Name {
@@ -356,12 +468,36 @@ public final class Constants {
             public static final int LENGTH = 255;
         }
 
-        public static final class State {
-            public static final String NAME = "client_state";
+        public static final class TaxId {
+            public static final String NAME = "tax_id";
+            public static final int LENGTH = 30;
         }
 
-        public static final class CreateDate {
-            public static final String NAME = "client_create_date";
+        public static final class ContactPerson {
+            public static final String NAME = "contact_person";
+            public static final int LENGTH = 150;
+        }
+
+        public static final class ContactPhone {
+            public static final String NAME = "contact_phone";
+            public static final int LENGTH = 25;
+        }
+
+        public static final class DateCreate {
+            public static final String NAME = "date_create";
+        }
+
+        public static final class DateUpdate {
+            public static final String NAME = "date_update";
+        }
+
+        public static final class IsDelete {
+            public static final String NAME = "is_delete";
+        }
+
+        public static final class State {
+            public static final String NAME = "state";
+            public static final int LENGTH = 20;
         }
     }
 
@@ -372,36 +508,96 @@ public final class Constants {
             public static final String NAME = "contract_id";
         }
 
-        public static final class CompanyId {
-            public static final String NAME = "company_id";
-        }
-
         public static final class ClientId {
             public static final String NAME = "client_id";
         }
 
-        public static final class Amount {
+        public static final class ContractCode {
+            public static final String NAME = "contract_code";
+            public static final int LENGTH = 40;
+        }
+
+        public static final class OperationType {
+            public static final String NAME = "operation_type";
+            public static final int LENGTH = 12;
+        }
+
+        public static final class OriginLocation {
+            public static final String NAME = "origin_location";
+            public static final int LENGTH = 255;
+        }
+
+        public static final class DestinationLocation {
+            public static final String NAME = "destination_location";
+            public static final int LENGTH = 255;
+        }
+
+        public static final class ExpectedStartDate {
+            public static final String NAME = "expected_start_date";
+        }
+
+        public static final class ExpectedDeliveryDate {
+            public static final String NAME = "expected_delivery_date";
+        }
+
+        public static final class ActualDeliveryDate {
+            public static final String NAME = "actual_delivery_date";
+        }
+
+        public static final class ReferenceDocument {
+            public static final String NAME = "reference_document";
+            public static final int LENGTH = 80;
+        }
+
+        public static final class DeclaredTotalWeightKg {
+            public static final String NAME = "declared_total_weight_kg";
+            public static final int PRECISION = 12;
+            public static final int SCALE = 3;
+        }
+
+        public static final class ExpectedContainerCount {
+            public static final String NAME = "expected_container_count";
+        }
+
+        public static final class Observations {
+            public static final String NAME = "observations";
+        }
+
+        public static final class ContractAmount {
             public static final String NAME = "contract_amount";
             public static final int PRECISION = 15;
             public static final int SCALE = 2;
         }
 
-        public static final class Date {
+        public static final class ContractDate {
             public static final String NAME = "contract_date";
         }
 
-        public static final class Description {
+        public static final class ContractDescription {
             public static final String NAME = "contract_description";
             public static final int LENGTH = 255;
         }
 
-        public static final class Type {
+        public static final class ContractType {
             public static final String NAME = "contract_type";
             public static final int LENGTH = 50;
         }
 
+        public static final class DateCreate {
+            public static final String NAME = "date_create";
+        }
+
+        public static final class DateUpdate {
+            public static final String NAME = "date_update";
+        }
+
+        public static final class IsDelete {
+            public static final String NAME = "is_delete";
+        }
+
         public static final class State {
-            public static final String NAME = "contract_state";
+            public static final String NAME = "state";
+            public static final int LENGTH = 20;
         }
     }
 
@@ -410,10 +606,6 @@ public final class Constants {
 
         public static final class Id {
             public static final String NAME = "charge_id";
-        }
-
-        public static final class CompanyId {
-            public static final String NAME = "company_id";
         }
 
         public static final class ContractId {
@@ -434,8 +626,38 @@ public final class Constants {
             public static final int LENGTH = 100;
         }
 
+        public static final class CargoReference {
+            public static final String NAME = "cargo_reference";
+            public static final int LENGTH = 80;
+        }
+
+        public static final class GoodsDescription {
+            public static final String NAME = "goods_description";
+        }
+
+        public static final class HazardousGoods {
+            public static final String NAME = "hazardous_goods";
+        }
+
+        public static final class HandlingInstructions {
+            public static final String NAME = "handling_instructions";
+        }
+
+        public static final class DateCreate {
+            public static final String NAME = "date_create";
+        }
+
+        public static final class DateUpdate {
+            public static final String NAME = "date_update";
+        }
+
+        public static final class IsDelete {
+            public static final String NAME = "is_delete";
+        }
+
         public static final class State {
-            public static final String NAME = "charge_state";
+            public static final String NAME = "state";
+            public static final int LENGTH = 20;
         }
     }
 
@@ -444,10 +666,6 @@ public final class Constants {
 
         public static final class Id {
             public static final String NAME = "container_id";
-        }
-
-        public static final class CompanyId {
-            public static final String NAME = "company_id";
         }
 
         public static final class ChargeId {
@@ -475,40 +693,156 @@ public final class Constants {
             public static final int LENGTH = 50;
         }
 
-        public static final class State {
-            public static final String NAME = "container_state";
+        public static final class IsoSize {
+            public static final String NAME = "iso_size";
+            public static final int LENGTH = 10;
         }
 
-        public static final class Date {
+        public static final class ContainerFormat {
+            public static final String NAME = "container_format";
+            public static final int LENGTH = 25;
+        }
+
+        public static final class SealNumber {
+            public static final String NAME = "seal_number";
+            public static final int LENGTH = 50;
+        }
+
+        public static final class GrossWeightKg {
+            public static final String NAME = "gross_weight_kg";
+            public static final int PRECISION = 12;
+            public static final int SCALE = 3;
+        }
+
+        public static final class TareWeightKg {
+            public static final String NAME = "tare_weight_kg";
+            public static final int PRECISION = 12;
+            public static final int SCALE = 3;
+        }
+
+        public static final class CargoWeightKg {
+            public static final String NAME = "cargo_weight_kg";
+            public static final int PRECISION = 12;
+            public static final int SCALE = 3;
+        }
+
+        public static final class ShippingLine {
+            public static final String NAME = "shipping_line";
+            public static final int LENGTH = 120;
+        }
+
+        public static final class CustomsReference {
+            public static final String NAME = "customs_reference";
+            public static final int LENGTH = 80;
+        }
+
+        public static final class TemperatureC {
+            public static final String NAME = "temperature_c";
+            public static final int PRECISION = 5;
+            public static final int SCALE = 2;
+        }
+
+        public static final class ContainerDate {
             public static final String NAME = "container_date";
+        }
+
+        public static final class DateCreate {
+            public static final String NAME = "date_create";
+        }
+
+        public static final class DateUpdate {
+            public static final String NAME = "date_update";
+        }
+
+        public static final class IsDelete {
+            public static final String NAME = "is_delete";
+        }
+
+        public static final class State {
+            public static final String NAME = "state";
+            public static final int LENGTH = 20;
         }
     }
 
-    public static final class TruckDriverAssignmentTable {
-        public static final String NAME = "truck_driver_assignment";
+    public static final class FreightTable {
+        public static final String NAME = "freight_table";
 
         public static final class Id {
-            public static final String NAME = "assignment_id";
+            public static final String NAME = "freight_id";
         }
 
-        public static final class CompanyId {
-            public static final String NAME = "company_id";
+        public static final class ContractId {
+            public static final String NAME = "contract_id";
+        }
+
+        public static final class ContainerId {
+            public static final String NAME = "container_id";
         }
 
         public static final class TruckId {
             public static final String NAME = "truck_id";
         }
 
-        public static final class DriverId {
-            public static final String NAME = "driver_id";
+        public static final class AuxiliaryProviderId {
+            public static final String NAME = "auxiliary_provider_id";
         }
 
-        public static final class AssignedFrom {
-            public static final String NAME = "assigned_from";
+        public static final class AuxiliaryTruckPlate {
+            public static final String NAME = "auxiliary_truck_plate";
+            public static final int LENGTH = 20;
         }
 
-        public static final class AssignedUntil {
-            public static final String NAME = "assigned_until";
+        public static final class FreightDescription {
+            public static final String NAME = "freight_description";
+            public static final int LENGTH = 255;
+        }
+
+        public static final class FreightCode {
+            public static final String NAME = "freight_code";
+            public static final int LENGTH = 40;
+        }
+
+        public static final class ScheduledDeparture {
+            public static final String NAME = "scheduled_departure";
+        }
+
+        public static final class ScheduledArrival {
+            public static final String NAME = "scheduled_arrival";
+        }
+
+        public static final class ActualDeparture {
+            public static final String NAME = "actual_departure";
+        }
+
+        public static final class ActualArrival {
+            public static final String NAME = "actual_arrival";
+        }
+
+        public static final class DeliveryNotes {
+            public static final String NAME = "delivery_notes";
+        }
+
+        public static final class FreightAmount {
+            public static final String NAME = "freight_amount";
+            public static final int PRECISION = 15;
+            public static final int SCALE = 2;
+        }
+
+        public static final class DateCreate {
+            public static final String NAME = "date_create";
+        }
+
+        public static final class DateUpdate {
+            public static final String NAME = "date_update";
+        }
+
+        public static final class IsDelete {
+            public static final String NAME = "is_delete";
+        }
+
+        public static final class State {
+            public static final String NAME = "state";
+            public static final int LENGTH = 20;
         }
     }
 
@@ -519,12 +853,9 @@ public final class Constants {
             public static final String NAME = "provider_id";
         }
 
-        public static final class CompanyId {
-            public static final String NAME = "company_id";
-        }
-
         public static final class Kind {
             public static final String NAME = "provider_kind";
+            public static final int LENGTH = 11;
         }
 
         public static final class Name {
@@ -547,12 +878,21 @@ public final class Constants {
             public static final int LENGTH = 255;
         }
 
-        public static final class Status {
-            public static final String NAME = "provider_status";
+        public static final class DateCreate {
+            public static final String NAME = "date_create";
         }
 
-        public static final class CreatedAt {
-            public static final String NAME = "created_at";
+        public static final class DateUpdate {
+            public static final String NAME = "date_update";
+        }
+
+        public static final class IsDelete {
+            public static final String NAME = "is_delete";
+        }
+
+        public static final class State {
+            public static final String NAME = "state";
+            public static final int LENGTH = 20;
         }
     }
 
@@ -563,12 +903,8 @@ public final class Constants {
             public static final String NAME = "journey_id";
         }
 
-        public static final class CompanyId {
-            public static final String NAME = "company_id";
-        }
-
-        public static final class ContainerId {
-            public static final String NAME = "container_id";
+        public static final class FreightId {
+            public static final String NAME = "freight_id";
         }
 
         public static final class Origin {
@@ -599,25 +935,34 @@ public final class Constants {
             public static final int LENGTH = 50;
         }
 
-        public static final class State {
-            public static final String NAME = "journey_state";
+        public static final class PlannedStartDate {
+            public static final String NAME = "planned_start_date";
         }
 
-        public static final class ExecutionType {
-            public static final String NAME = "execution_type";
+        public static final class PlannedEndDate {
+            public static final String NAME = "planned_end_date";
+        }
+
+        public static final class DeliveryConfirmedAt {
+            public static final String NAME = "delivery_confirmed_at";
+        }
+
+        public static final class RecipientName {
+            public static final String NAME = "recipient_name";
+            public static final int LENGTH = 150;
+        }
+
+        public static final class ProofOfDeliveryReference {
+            public static final String NAME = "proof_of_delivery_reference";
+            public static final int LENGTH = 255;
+        }
+
+        public static final class Observations {
+            public static final String NAME = "observations";
         }
 
         public static final class AssignmentId {
             public static final String NAME = "assignment_id";
-        }
-
-        public static final class AuxiliaryProviderId {
-            public static final String NAME = "auxiliary_provider_id";
-        }
-
-        public static final class AuxiliaryTruckPlate {
-            public static final String NAME = "auxiliary_truck_plate";
-            public static final int LENGTH = 20;
         }
 
         public static final class AuxiliaryDriverName {
@@ -632,6 +977,7 @@ public final class Constants {
 
         public static final class AuxiliaryReason {
             public static final String NAME = "auxiliary_reason";
+            public static final int LENGTH = 16;
         }
 
         public static final class AgreedAmount {
@@ -640,8 +986,21 @@ public final class Constants {
             public static final int SCALE = 2;
         }
 
-        public static final class CreatedAt {
-            public static final String NAME = "created_at";
+        public static final class DateCreate {
+            public static final String NAME = "date_create";
+        }
+
+        public static final class DateUpdate {
+            public static final String NAME = "date_update";
+        }
+
+        public static final class IsDelete {
+            public static final String NAME = "is_delete";
+        }
+
+        public static final class State {
+            public static final String NAME = "state";
+            public static final int LENGTH = 20;
         }
     }
 }

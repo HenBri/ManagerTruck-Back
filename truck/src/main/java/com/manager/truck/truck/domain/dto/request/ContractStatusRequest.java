@@ -10,5 +10,13 @@ import lombok.Setter;
 public class ContractStatusRequest {
 
     @NotNull
-    private ContractState status;
+    private ContractState state;
+
+    public ContractState getContractState() {
+        return state;
+    }
+
+    public void setContractState(ContractState state) {
+        this.state = state;
+    }
 }

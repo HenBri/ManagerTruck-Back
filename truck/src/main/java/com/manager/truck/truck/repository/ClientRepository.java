@@ -11,15 +11,17 @@ import java.util.Optional;
 
 public interface ClientRepository extends JpaRepository<Client, Long> {
 
-    @Query("SELECT c FROM Client c WHERE c.companyId = :companyId AND c.clientId = :clientId")
-    Optional<Client> findByCompanyIdAndClientId(@Param("companyId") Long companyId,
-                                                @Param("clientId") Long clientId);
+    @Query("SELECT c FROM Client c WHERE c.clientId = :clientId AND c.isDelete = false")
+    Optional<Client> findActiveById(@Param("clientId") Long clientId);
 
-    @Query("SELECT c FROM Client c WHERE c.companyId = :companyId")
-    Page<Client> findByCompanyId(@Param("companyId") Long companyId, Pageable pageable);
+    @Query("SELECT c FROM Client c WHERE c.isDelete = false")
+    Page<Client> findAllActive(Pageable pageable);
 
-    @Query("SELECT c FROM Client c WHERE c.companyId = :companyId AND c.clientState = :clientState")
-    Page<Client> findByCompanyIdAndClientState(@Param("companyId") Long companyId,
-                                               @Param("clientState") Boolean clientState,
-                                               Pageable pageable);
+    @Query("SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END FROM Client c " +
+            "WHERE LOWER(c.clientName) = LOWER(:clientName) AND c.isDelete = false")
+    boolean existsByClientName(@Param("clientName") String clientName);
+
+    @Query("SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END FROM Client c " +
+            "WHERE LOWER(c.clientName) = LOWER(:clientName) AND c.clientId <> :clientId AND c.isDelete = false")
+    boolean existsByClientNameAndClientIdNot(@Param("clientName") String clientName, @Param("clientId") Long clientId);
 }

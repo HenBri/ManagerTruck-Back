@@ -6,7 +6,6 @@ import com.manager.truck.truck.domain.dto.request.AuxiliaryProviderUpdateRequest
 import com.manager.truck.truck.domain.dto.response.AuxiliaryProviderResponse;
 import com.manager.truck.truck.domain.dto.response.AuxiliaryProvidersResponse;
 import com.manager.truck.truck.domain.enums.AuxiliaryProviderKind;
-import com.manager.truck.truck.domain.enums.AuxiliaryProviderStatus;
 import com.manager.truck.truck.usecase.auxiliaryprovider.GetAllAuxiliaryProvidersUseCase;
 import com.manager.truck.truck.usecase.auxiliaryprovider.GetAuxiliaryProviderByIdUseCase;
 import com.manager.truck.truck.usecase.auxiliaryprovider.SaveAuxiliaryProviderUseCase;
@@ -31,11 +30,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/companies/{companyId}/auxiliary-providers")
+@RequestMapping("/api/auxiliary-providers")
 @RequiredArgsConstructor
 @Tag(name = "Auxiliary Providers",
         description = "Proveedores ocasionales de auxilio (empresa o independiente); nunca son socios. "
-                + "Solo SUPER_ADMIN y SECRETARY administran (PARTNER/DRIVER sin acceso)")
+                + "Solo ADMIN y SECRETARY administran")
 public class AuxiliaryProviderController {
 
     private final GetAllAuxiliaryProvidersUseCase getAllAuxiliaryProvidersUseCase;
@@ -45,53 +44,43 @@ public class AuxiliaryProviderController {
     private final UpdateAuxiliaryProviderStatusUseCase updateAuxiliaryProviderStatusUseCase;
 
     @GetMapping
-    @Operation(summary = "Lista los proveedores de auxilio de una empresa con filtros opcionales "
-            + "por tipo, estado y nombre")
+    @Operation(summary = "Lista los proveedores de auxilio con filtros opcionales por tipo y nombre")
     public AuxiliaryProvidersResponse getAll(
-            @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
             @Parameter(description = "Filtra por tipo de proveedor") @RequestParam(required = false)
             AuxiliaryProviderKind kind,
-            @Parameter(description = "Filtra por estado del proveedor") @RequestParam(required = false)
-            AuxiliaryProviderStatus status,
             @Parameter(description = "Filtra por nombre (parcial, sin distinguir mayúsculas)")
             @RequestParam(required = false) String name,
             @PageableDefault(size = 20, sort = "providerId") Pageable pageable) {
-        return getAllAuxiliaryProvidersUseCase.execute(companyId, kind, status, name, pageable);
+        return getAllAuxiliaryProvidersUseCase.execute(kind, name, pageable);
     }
 
     @GetMapping("/{providerId}")
-    @Operation(summary = "Consulta un proveedor de auxilio por id dentro de la empresa")
+    @Operation(summary = "Consulta un proveedor de auxilio por id")
     public AuxiliaryProviderResponse getById(
-            @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
             @Parameter(description = "Identificador del proveedor de auxilio") @PathVariable Long providerId) {
-        return getAuxiliaryProviderByIdUseCase.execute(companyId, providerId);
+        return getAuxiliaryProviderByIdUseCase.execute(providerId);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Crea un proveedor de auxilio en la empresa "
-            + "(SUPER_ADMIN o SECRETARY); el nombre debe ser único por empresa")
-    public AuxiliaryProviderResponse create(
-            @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
-            @Valid @RequestBody AuxiliaryProviderRequest request) {
-        return saveAuxiliaryProviderUseCase.execute(companyId, request);
+    @Operation(summary = "Crea un proveedor de auxilio (ADMIN o SECRETARY)")
+    public AuxiliaryProviderResponse create(@Valid @RequestBody AuxiliaryProviderRequest request) {
+        return saveAuxiliaryProviderUseCase.execute(request);
     }
 
     @PutMapping("/{providerId}")
     @Operation(summary = "Actualiza los datos de un proveedor de auxilio sin cambiar su estado")
     public AuxiliaryProviderResponse update(
-            @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
             @Parameter(description = "Identificador del proveedor de auxilio") @PathVariable Long providerId,
             @Valid @RequestBody AuxiliaryProviderUpdateRequest request) {
-        return updateAuxiliaryProviderUseCase.execute(companyId, providerId, request);
+        return updateAuxiliaryProviderUseCase.execute(providerId, request);
     }
 
     @PutMapping("/{providerId}/status")
-    @Operation(summary = "Cambia el estado del proveedor de auxilio (ACTIVE <-> INACTIVE)")
+    @Operation(summary = "Cambia el estado del proveedor de auxilio")
     public AuxiliaryProviderResponse updateStatus(
-            @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
             @Parameter(description = "Identificador del proveedor de auxilio") @PathVariable Long providerId,
             @Valid @RequestBody AuxiliaryProviderStatusRequest request) {
-        return updateAuxiliaryProviderStatusUseCase.execute(companyId, providerId, request);
+        return updateAuxiliaryProviderStatusUseCase.execute(providerId, request);
     }
 }

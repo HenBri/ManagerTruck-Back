@@ -2,25 +2,23 @@ package com.manager.truck.truck.domain.dto.response;
 
 import com.manager.truck.truck.domain.AuxiliaryProvider;
 import com.manager.truck.truck.domain.enums.AuxiliaryProviderKind;
-import com.manager.truck.truck.domain.enums.AuxiliaryProviderStatus;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Getter
 @Setter
 public class AuxiliaryProviderResponse extends CommonResponse {
 
     private Long providerId;
-    private Long companyId;
     private AuxiliaryProviderKind providerKind;
     private String providerName;
     private String providerDocument;
     private String providerPhone;
     private String providerEmail;
-    private AuxiliaryProviderStatus providerStatus;
-    private LocalDateTime createdAt;
+    private String state;
+    private OffsetDateTime dateCreate;
 
     public AuxiliaryProviderResponse() {
         super(StatusCodeResponse.SUCCESS_CODE, StatusCodeResponse.SUCCESS_MSG);
@@ -29,14 +27,17 @@ public class AuxiliaryProviderResponse extends CommonResponse {
     public static AuxiliaryProviderResponse from(AuxiliaryProvider provider) {
         AuxiliaryProviderResponse response = new AuxiliaryProviderResponse();
         response.setProviderId(provider.getProviderId());
-        response.setCompanyId(provider.getCompanyId());
         response.setProviderKind(provider.getProviderKind());
         response.setProviderName(provider.getProviderName());
         response.setProviderDocument(provider.getProviderDocument());
         response.setProviderPhone(provider.getProviderPhone());
         response.setProviderEmail(provider.getProviderEmail());
-        response.setProviderStatus(provider.getProviderStatus());
-        response.setCreatedAt(provider.getCreatedAt());
+        response.setState(provider.getState());
+        response.setDateCreate(provider.getDateCreate());
         return response;
+    }
+
+    public String getProviderStatus() {
+        return state;
     }
 }

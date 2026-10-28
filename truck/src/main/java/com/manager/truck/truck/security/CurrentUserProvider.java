@@ -21,32 +21,35 @@ public class CurrentUserProvider {
         return new CurrentUser(principal.getId(), principal.getEmail());
     }
 
-    public boolean isSuperAdmin() {
+    public boolean isAdmin() {
         CurrentUser currentUser = get();
-        return userService.findPlatformRoleNames(currentUser.userId()).contains(SecurityRoles.SUPER_ADMIN);
+        return userService.findRoleNames(currentUser.userId()).contains(SecurityRoles.ADMIN);
     }
 
-    public boolean isActiveMemberOf(Long companyId) {
+    public boolean isSecretary() {
         CurrentUser currentUser = get();
-        return userService.isActiveMember(currentUser.userId(), companyId);
+        return userService.findRoleNames(currentUser.userId()).contains(SecurityRoles.SECRETARY);
     }
 
-    public boolean hasCompanyRole(Long companyId, String roleName) {
+    public boolean isPartner() {
         CurrentUser currentUser = get();
-        return userService.findCompanyRoleNames(currentUser.userId(), companyId).contains(roleName);
+        return userService.findRoleNames(currentUser.userId()).contains(SecurityRoles.PARTNER);
     }
 
-    public void requireCompanyAdmin(Long companyId) {
-        if (!isSuperAdmin() && !hasCompanyRole(companyId, SecurityRoles.SECRETARY)) {
-            throw new ForbiddenOperationException(
-                    "Solo SUPER_ADMIN o un SECRETARY de la empresa puede administrar sus membresías y roles");
+    public boolean isDriver() {
+        CurrentUser currentUser = get();
+        return userService.findRoleNames(currentUser.userId()).contains(SecurityRoles.DRIVER);
+    }
+
+    public void requireAdmin() {
+        if (!isAdmin()) {
+            throw new ForbiddenOperationException("Solo un administrador puede realizar esta operación");
         }
     }
 
-    public void requireCompanyAccess(Long companyId) {
-        if (!isSuperAdmin() && !isActiveMemberOf(companyId)) {
-            throw new ForbiddenOperationException(
-                    "No perteneces a esta empresa o tu membresía no está activa");
+    public void requireAdminOrSecretary() {
+        if (!isAdmin() && !isSecretary()) {
+            throw new ForbiddenOperationException("Solo un administrador o secretaría puede realizar esta operación");
         }
     }
 }

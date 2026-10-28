@@ -1,7 +1,6 @@
 package com.manager.truck.truck.service;
 
 import com.manager.truck.truck.domain.Container;
-import com.manager.truck.truck.domain.enums.ContainerState;
 import com.manager.truck.truck.exception.ResourceNotFoundException;
 import com.manager.truck.truck.repository.ContainerRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,48 +22,38 @@ public class ContainerServiceImpl implements ContainerService {
     }
 
     @Override
-    public Container findByCompanyIdAndContainerId(Long companyId, Long containerId) {
-        return containerRepository.findByCompanyIdAndContainerId(companyId, containerId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Contenedor no encontrado con el id " + containerId + " en la empresa " + companyId));
+    public Container update(Container container) {
+        return containerRepository.save(container);
     }
 
     @Override
-    public Optional<Container> findOptionalByCompanyIdAndContainerId(Long companyId, Long containerId) {
-        return containerRepository.findByCompanyIdAndContainerId(companyId, containerId);
+    public Container findById(Long containerId) {
+        return containerRepository.findActiveById(containerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Contenedor no encontrado con id " + containerId));
     }
 
     @Override
-    public Page<Container> findByCompanyId(Long companyId, Pageable pageable) {
-        return containerRepository.findByCompanyId(companyId, pageable);
+    public Optional<Container> findOptionalById(Long containerId) {
+        return containerRepository.findActiveById(containerId);
     }
 
     @Override
-    public Page<Container> findByCompanyIdAndChargeId(Long companyId, Long chargeId, Pageable pageable) {
-        return containerRepository.findByCompanyIdAndChargeId(companyId, chargeId, pageable);
+    public boolean existsByContainerCode(String containerCode) {
+        return containerRepository.existsByContainerCode(containerCode);
     }
 
     @Override
-    public Page<Container> findByCompanyIdAndContainerState(Long companyId, ContainerState containerState,
-                                                            Pageable pageable) {
-        return containerRepository.findByCompanyIdAndContainerState(companyId, containerState, pageable);
+    public boolean existsByContainerCodeAndContainerIdNot(String containerCode, Long containerId) {
+        return containerRepository.existsByContainerCodeAndContainerIdNot(containerCode, containerId);
     }
 
     @Override
-    public Page<Container> findByCompanyIdAndChargeIdAndContainerState(Long companyId, Long chargeId,
-                                                                       ContainerState containerState,
-                                                                       Pageable pageable) {
-        return containerRepository.findByCompanyIdAndChargeIdAndContainerState(companyId, chargeId,
-                containerState, pageable);
+    public Page<Container> findAll(Pageable pageable) {
+        return containerRepository.findAllActive(pageable);
     }
 
     @Override
-    public boolean existsByCompanyIdAndContainerCode(Long companyId, String containerCode) {
-        return containerRepository.existsByCompanyIdAndContainerCode(companyId, containerCode);
-    }
-
-    @Override
-    public boolean existsByCompanyIdAndContainerCodeNot(Long companyId, String containerCode, Long containerId) {
-        return containerRepository.existsByCompanyIdAndContainerCodeNot(companyId, containerCode, containerId);
+    public Page<Container> findByChargeId(Long chargeId, Pageable pageable) {
+        return containerRepository.findByChargeId(chargeId, pageable);
     }
 }

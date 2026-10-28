@@ -28,10 +28,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/companies/{companyId}/trucks")
+@RequestMapping("/api/trucks")
 @RequiredArgsConstructor
-@Tag(name = "Trucks", description = "Camiones de socios por empresa (la empresa no es propietaria); "
-        + "SECRETARY administra, PARTNER consulta sus propios camiones")
+@Tag(name = "Trucks", description = "Camiones de socios. ADMIN y SECRETARY administran, PARTNER consulta sus camiones")
 public class TruckController {
 
     private final GetAllTrucksUseCase getAllTrucksUseCase;
@@ -41,50 +40,38 @@ public class TruckController {
     private final UpdateTruckStatusUseCase updateTruckStatusUseCase;
 
     @GetMapping
-    @Operation(summary = "Lista los camiones de la empresa; SECRETARY/SUPER_ADMIN ven todos, "
-            + "PARTNER solo los de propiedad suya")
-    public TrucksResponse getAll(
-            @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
-            @PageableDefault(size = 20, sort = "truckId") Pageable pageable) {
-        return getAllTrucksUseCase.execute(companyId, pageable);
+    @Operation(summary = "Lista los camiones; ADMIN/SECRETARY ven todos, PARTNER solo los de su propiedad")
+    public TrucksResponse getAll(@PageableDefault(size = 20, sort = "truckId") Pageable pageable) {
+        return getAllTrucksUseCase.execute(pageable);
     }
 
     @GetMapping("/{truckId}")
-    @Operation(summary = "Consulta un camión por id dentro de la empresa; "
-            + "PARTNER solo camiones de su propiedad")
+    @Operation(summary = "Consulta un camión por id")
     public TruckResponse getById(
-            @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
             @Parameter(description = "Identificador del camión") @PathVariable Long truckId) {
-        return getTruckByIdUseCase.execute(companyId, truckId);
+        return getTruckByIdUseCase.execute(truckId);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Registra un camión con socio propietario obligatorio "
-            + "(SUPER_ADMIN o SECRETARY de esa empresa)")
-    public TruckResponse create(
-            @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
-            @Valid @RequestBody TruckRequest request) {
-        return saveTruckUseCase.execute(companyId, request);
+    @Operation(summary = "Registra un camión con socio propietario obligatorio")
+    public TruckResponse create(@Valid @RequestBody TruckRequest request) {
+        return saveTruckUseCase.execute(request);
     }
 
     @PutMapping("/{truckId}")
-    @Operation(summary = "Actualiza los datos escalares de un camión sin cambiar de socio "
-            + "(SUPER_ADMIN o SECRETARY de esa empresa)")
+    @Operation(summary = "Actualiza los datos de un camión sin cambiar de socio")
     public TruckResponse update(
-            @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
             @Parameter(description = "Identificador del camión") @PathVariable Long truckId,
             @Valid @RequestBody TruckUpdateRequest request) {
-        return updateTruckUseCase.execute(companyId, truckId, request);
+        return updateTruckUseCase.execute(truckId, request);
     }
 
     @PutMapping("/{truckId}/status")
-    @Operation(summary = "Cambia el estado del camión (ACTIVE/MAINTENANCE/INACTIVE) "
-            + "(SUPER_ADMIN o SECRETARY de esa empresa)")
+    @Operation(summary = "Cambia el estado del camión")
     public TruckResponse updateStatus(
-            @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
             @Parameter(description = "Identificador del camión") @PathVariable Long truckId,
             @Valid @RequestBody TruckStatusRequest request) {
-        return updateTruckStatusUseCase.execute(companyId, truckId, request);
+        return updateTruckStatusUseCase.execute(truckId, request);
     }
 }

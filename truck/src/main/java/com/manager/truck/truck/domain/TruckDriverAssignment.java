@@ -9,7 +9,7 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Getter
 @Setter
@@ -22,9 +22,6 @@ public class TruckDriverAssignment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long assignmentId;
 
-    @Column(name = Constants.TruckDriverAssignmentTable.CompanyId.NAME, nullable = false)
-    private Long companyId;
-
     @Column(name = Constants.TruckDriverAssignmentTable.TruckId.NAME, nullable = false)
     private Long truckId;
 
@@ -32,8 +29,20 @@ public class TruckDriverAssignment {
     private Long driverId;
 
     @Column(name = Constants.TruckDriverAssignmentTable.AssignedFrom.NAME, nullable = false)
-    private LocalDateTime assignedFrom;
+    private OffsetDateTime assignedFrom;
 
     @Column(name = Constants.TruckDriverAssignmentTable.AssignedUntil.NAME)
-    private LocalDateTime assignedUntil;
+    private OffsetDateTime assignedUntil;
+
+    @Column(name = Constants.TruckDriverAssignmentTable.DateCreate.NAME, insertable = false, updatable = false)
+    private OffsetDateTime dateCreate;
+
+    @Column(name = Constants.TruckDriverAssignmentTable.DateUpdate.NAME, insertable = false, updatable = false)
+    private OffsetDateTime dateUpdate;
+
+    @Column(name = Constants.TruckDriverAssignmentTable.IsDelete.NAME, nullable = false)
+    private Boolean isDelete = false;
+
+    @Column(name = Constants.TruckDriverAssignmentTable.State.NAME, length = Constants.TruckDriverAssignmentTable.State.LENGTH, nullable = false)
+    private String state = "ACTIVE";
 }

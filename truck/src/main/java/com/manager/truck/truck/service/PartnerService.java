@@ -1,6 +1,7 @@
 package com.manager.truck.truck.service;
 
 import com.manager.truck.truck.domain.Partner;
+import com.manager.truck.truck.domain.enums.PartnerType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -10,13 +11,13 @@ public interface PartnerService {
 
     Partner save(Partner partner);
 
-    Partner findByCompanyIdAndPartnerId(Long companyId, Long partnerId);
+    Partner update(Partner partner);
 
-    Optional<Partner> findOptionalByCompanyIdAndPartnerId(Long companyId, Long partnerId);
+    Partner findById(Long partnerId);
 
-    Optional<Partner> findByCompanyIdAndUserId(Long companyId, Long userId);
+    Optional<Partner> findOptionalById(Long partnerId);
 
-    boolean existsByCompanyIdAndUserId(Long companyId, Long userId);
+    Page<Partner> findAll(Pageable pageable);
 
-    Page<Partner> findByCompanyId(Long companyId, Pageable pageable);
+    Page<Partner> findByType(PartnerType partnerType, Pageable pageable);
 }

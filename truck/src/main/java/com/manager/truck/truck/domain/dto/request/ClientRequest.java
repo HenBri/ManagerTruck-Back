@@ -26,4 +26,13 @@ public class ClientRequest {
 
     @Size(max = 255)
     private String clientAddress;
+
+    @Size(max = 30)
+    private String taxId;
+
+    @Size(max = 150)
+    private String contactPerson;
+
+    @Size(max = 25)
+    private String contactPhone;
 }

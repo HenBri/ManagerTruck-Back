@@ -10,15 +10,19 @@ public interface TruckService {
 
     Truck save(Truck truck);
 
-    Truck findByCompanyIdAndTruckId(Long companyId, Long truckId);
+    Truck update(Truck truck);
 
-    Truck findByCompanyIdAndTruckIdForUpdate(Long companyId, Long truckId);
+    Truck findById(Long truckId);
 
-    boolean existsByCompanyIdAndTruckBoard(Long companyId, String truckBoard);
+    Optional<Truck> findOptionalById(Long truckId);
 
-    boolean existsByCompanyIdAndTruckBoardAndTruckIdNot(Long companyId, String truckBoard, Long truckId);
+    Truck findByIdForUpdate(Long truckId);
 
-    Page<Truck> findByCompanyId(Long companyId, Pageable pageable);
+    boolean existsByTruckBoard(String truckBoard);
 
-    Page<Truck> findByCompanyIdAndOwnerPartnerId(Long companyId, Long ownerPartnerId, Pageable pageable);
+    boolean existsByTruckBoardAndTruckIdNot(String truckBoard, Long truckId);
+
+    Page<Truck> findAll(Pageable pageable);
+
+    Page<Truck> findByOwnerPartnerId(Long ownerPartnerId, Pageable pageable);
 }

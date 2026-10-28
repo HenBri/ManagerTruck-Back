@@ -8,6 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class TruckServiceImpl implements TruckService {
@@ -20,36 +22,44 @@ public class TruckServiceImpl implements TruckService {
     }
 
     @Override
-    public Truck findByCompanyIdAndTruckId(Long companyId, Long truckId) {
-        return truckRepository.findByCompanyIdAndTruckId(companyId, truckId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Camión no encontrado con el id " + truckId + " en la empresa " + companyId));
+    public Truck update(Truck truck) {
+        return truckRepository.save(truck);
     }
 
     @Override
-    public Truck findByCompanyIdAndTruckIdForUpdate(Long companyId, Long truckId) {
-        return truckRepository.findByCompanyIdAndTruckIdForUpdate(companyId, truckId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Camión no encontrado con el id " + truckId + " en la empresa " + companyId));
+    public Truck findById(Long truckId) {
+        return truckRepository.findActiveById(truckId)
+                .orElseThrow(() -> new ResourceNotFoundException("Camión no encontrado con el id " + truckId));
     }
 
     @Override
-    public boolean existsByCompanyIdAndTruckBoard(Long companyId, String truckBoard) {
-        return truckRepository.existsByCompanyIdAndTruckBoard(companyId, truckBoard);
+    public Optional<Truck> findOptionalById(Long truckId) {
+        return truckRepository.findActiveById(truckId);
     }
 
     @Override
-    public boolean existsByCompanyIdAndTruckBoardAndTruckIdNot(Long companyId, String truckBoard, Long truckId) {
-        return truckRepository.existsByCompanyIdAndTruckBoardAndTruckIdNot(companyId, truckBoard, truckId);
+    public Truck findByIdForUpdate(Long truckId) {
+        return truckRepository.findActiveByIdForUpdate(truckId)
+                .orElseThrow(() -> new ResourceNotFoundException("Camión no encontrado con el id " + truckId));
     }
 
     @Override
-    public Page<Truck> findByCompanyId(Long companyId, Pageable pageable) {
-        return truckRepository.findByCompanyId(companyId, pageable);
+    public boolean existsByTruckBoard(String truckBoard) {
+        return truckRepository.existsByTruckBoard(truckBoard);
     }
 
     @Override
-    public Page<Truck> findByCompanyIdAndOwnerPartnerId(Long companyId, Long ownerPartnerId, Pageable pageable) {
-        return truckRepository.findByCompanyIdAndOwnerPartnerId(companyId, ownerPartnerId, pageable);
+    public boolean existsByTruckBoardAndTruckIdNot(String truckBoard, Long truckId) {
+        return truckRepository.existsByTruckBoardAndTruckIdNot(truckBoard, truckId);
+    }
+
+    @Override
+    public Page<Truck> findAll(Pageable pageable) {
+        return truckRepository.findAllActive(pageable);
+    }
+
+    @Override
+    public Page<Truck> findByOwnerPartnerId(Long ownerPartnerId, Pageable pageable) {
+        return truckRepository.findByOwnerPartnerId(ownerPartnerId, pageable);
     }
 }

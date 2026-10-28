@@ -30,10 +30,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/companies/{companyId}/contracts")
+@RequestMapping("/api/contracts")
 @RequiredArgsConstructor
-@Tag(name = "Contracts", description = "Contratos comerciales por cliente y empresa; "
-        + "solo SUPER_ADMIN y SECRETARY administran (PARTNER/DRIVER sin acceso)")
+@Tag(name = "Contracts", description = "Contratos comerciales por cliente. Solo ADMIN y SECRETARY administran")
 public class ContractController {
 
     private final GetAllContractsUseCase getAllContractsUseCase;
@@ -43,49 +42,40 @@ public class ContractController {
     private final UpdateContractStatusUseCase updateContractStatusUseCase;
 
     @GetMapping
-    @Operation(summary = "Lista los contratos de una empresa con filtros opcionales por cliente y estado")
+    @Operation(summary = "Lista los contratos con filtro opcional por cliente")
     public ContractsResponse getAll(
-            @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
             @Parameter(description = "Filtra por cliente dueño del contrato") @RequestParam(required = false) Long clientId,
-            @Parameter(description = "Filtra por estado del contrato") @RequestParam(required = false) ContractState state,
             @PageableDefault(size = 20, sort = "contractId") Pageable pageable) {
-        return getAllContractsUseCase.execute(companyId, clientId, state, pageable);
+        return getAllContractsUseCase.execute(clientId, pageable);
     }
 
     @GetMapping("/{contractId}")
-    @Operation(summary = "Consulta un contrato por id dentro de la empresa")
+    @Operation(summary = "Consulta un contrato por id")
     public ContractResponse getById(
-            @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
             @Parameter(description = "Identificador del contrato") @PathVariable Long contractId) {
-        return getContractByIdUseCase.execute(companyId, contractId);
+        return getContractByIdUseCase.execute(contractId);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Crea un contrato para un cliente de la empresa (SUPER_ADMIN o SECRETARY); "
-            + "el cliente debe estar activo y en el mismo tenant")
-    public ContractResponse create(
-            @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
-            @Valid @RequestBody ContractRequest request) {
-        return saveContractUseCase.execute(companyId, request);
+    @Operation(summary = "Crea un contrato para un cliente")
+    public ContractResponse create(@Valid @RequestBody ContractRequest request) {
+        return saveContractUseCase.execute(request);
     }
 
     @PutMapping("/{contractId}")
-    @Operation(summary = "Actualiza los datos escalares de un contrato sin cambiar cliente ni estado")
+    @Operation(summary = "Actualiza los datos de un contrato sin cambiar su estado")
     public ContractResponse update(
-            @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
             @Parameter(description = "Identificador del contrato") @PathVariable Long contractId,
             @Valid @RequestBody ContractUpdateRequest request) {
-        return updateContractUseCase.execute(companyId, contractId, request);
+        return updateContractUseCase.execute(contractId, request);
     }
 
     @PutMapping("/{contractId}/status")
-    @Operation(summary = "Cambia el estado del contrato con transiciones estrictas "
-            + "(DRAFT→ACTIVE|CANCELLED, ACTIVE→COMPLETED|CANCELLED)")
+    @Operation(summary = "Cambia el estado del contrato")
     public ContractResponse updateStatus(
-            @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
             @Parameter(description = "Identificador del contrato") @PathVariable Long contractId,
             @Valid @RequestBody ContractStatusRequest request) {
-        return updateContractStatusUseCase.execute(companyId, contractId, request);
+        return updateContractStatusUseCase.execute(contractId, request);
     }
 }

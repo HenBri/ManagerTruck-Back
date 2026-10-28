@@ -22,36 +22,33 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
-    public Driver findByCompanyIdAndDriverId(Long companyId, Long driverId) {
-        return driverRepository.findByCompanyIdAndDriverId(companyId, driverId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Conductor no encontrado con el id " + driverId + " en la empresa " + companyId));
+    public Driver update(Driver driver) {
+        return driverRepository.save(driver);
     }
 
     @Override
-    public Driver findByCompanyIdAndDriverIdForUpdate(Long companyId, Long driverId) {
-        return driverRepository.findByCompanyIdAndDriverIdForUpdate(companyId, driverId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Conductor no encontrado con el id " + driverId + " en la empresa " + companyId));
+    public Driver findById(Long driverId) {
+        return driverRepository.findActiveById(driverId)
+                .orElseThrow(() -> new ResourceNotFoundException("Conductor no encontrado con el id " + driverId));
     }
 
     @Override
-    public Optional<Driver> findByCompanyIdAndUserId(Long companyId, Long userId) {
-        return driverRepository.findByCompanyIdAndUserId(companyId, userId);
+    public Optional<Driver> findOptionalById(Long driverId) {
+        return driverRepository.findActiveById(driverId);
     }
 
     @Override
-    public boolean existsByCompanyIdAndUserId(Long companyId, Long userId) {
-        return driverRepository.existsByCompanyIdAndUserId(companyId, userId);
+    public boolean existsByDriverLicense(String driverLicense) {
+        return driverRepository.existsByDriverLicense(driverLicense);
     }
 
     @Override
-    public boolean existsByCompanyIdAndPersonPartnerId(Long companyId, Long personPartnerId) {
-        return driverRepository.existsByCompanyIdAndPersonPartnerId(companyId, personPartnerId);
+    public boolean existsByDriverLicenseAndDriverIdNot(String driverLicense, Long driverId) {
+        return driverRepository.existsByDriverLicenseAndDriverIdNot(driverLicense, driverId);
     }
 
     @Override
-    public Page<Driver> findByCompanyId(Long companyId, Pageable pageable) {
-        return driverRepository.findByCompanyId(companyId, pageable);
+    public Page<Driver> findAll(Pageable pageable) {
+        return driverRepository.findAllActive(pageable);
     }
 }

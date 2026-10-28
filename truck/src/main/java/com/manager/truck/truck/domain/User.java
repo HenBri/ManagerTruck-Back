@@ -1,18 +1,18 @@
 package com.manager.truck.truck.domain;
 
-import com.manager.truck.truck.domain.enums.UserStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Getter
 @Setter
@@ -25,28 +25,25 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
-    @Column(name = Constants.UserTable.Email.NAME, length = Constants.UserTable.Email.LENGTH, nullable = false, unique = true)
-    private String userEmail;
+    @Column(name = Constants.UserTable.PersonId.NAME, nullable = false, unique = true)
+    private Long personId;
 
     @Column(name = Constants.UserTable.PasswordHash.NAME, length = Constants.UserTable.PasswordHash.LENGTH, nullable = false)
     private String passwordHash;
 
-    @Column(name = Constants.UserTable.Name.NAME, length = Constants.UserTable.Name.LENGTH, nullable = false)
-    private String userName;
+    @Column(name = Constants.UserTable.DateCreate.NAME, insertable = false, updatable = false)
+    private OffsetDateTime dateCreate;
 
-    @Column(name = Constants.UserTable.Lastname.NAME, length = Constants.UserTable.Lastname.LENGTH, nullable = false)
-    private String userLastname;
+    @Column(name = Constants.UserTable.DateUpdate.NAME, insertable = false, updatable = false)
+    private OffsetDateTime dateUpdate;
 
-    @Column(name = Constants.UserTable.Ci.NAME, length = Constants.UserTable.Ci.LENGTH, nullable = true)
-    private String userCi;
+    @Column(name = Constants.UserTable.IsDelete.NAME, nullable = false)
+    private Boolean isDelete = false;
 
-    @Column(name = Constants.UserTable.Phone.NAME, length = Constants.UserTable.Phone.LENGTH, nullable = true)
-    private String userPhone;
+    @Column(name = Constants.UserTable.State.NAME, length = Constants.UserTable.State.LENGTH, nullable = false)
+    private String state = "ACTIVE";
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = Constants.UserTable.Status.NAME, nullable = false)
-    private UserStatus userStatus;
-
-    @Column(name = Constants.UserTable.CreatedAt.NAME, insertable = false, updatable = false)
-    private LocalDateTime userCreatedAt;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = Constants.UserTable.PersonId.NAME, insertable = false, updatable = false)
+    private Person person;
 }

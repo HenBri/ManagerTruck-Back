@@ -27,10 +27,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/companies/{companyId}/assignments")
+@RequestMapping("/api/assignments")
 @RequiredArgsConstructor
-@Tag(name = "TruckDriverAssignments", description = "Asignación de conductores a camiones de socios con "
-        + "historial; SECRETARY administra, PARTNER consulta las de sus camiones, DRIVER las suyas")
+@Tag(name = "TruckDriverAssignments", description = "Asignación de conductores a camiones")
 public class TruckDriverAssignmentController {
 
     private final AssignTruckDriverUseCase assignTruckDriverUseCase;
@@ -39,42 +38,33 @@ public class TruckDriverAssignmentController {
     private final EndTruckDriverAssignmentUseCase endTruckDriverAssignmentUseCase;
 
     @GetMapping
-    @Operation(summary = "Historial de asignaciones de la empresa; SECRETARY/SUPER_ADMIN ven todas "
-            + "(filtros opcionales truckId/driverId), PARTNER las de sus camiones, DRIVER las suyas")
+    @Operation(summary = "Historial de asignaciones")
     public TruckDriverAssignmentsResponse getAll(
-            @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
             @Parameter(description = "Filtro opcional por camión") @RequestParam(required = false) Long truckId,
             @Parameter(description = "Filtro opcional por conductor") @RequestParam(required = false) Long driverId,
             @PageableDefault(size = 20, sort = "assignmentId") Pageable pageable) {
-        return getAllTruckDriverAssignmentsUseCase.execute(companyId, truckId, driverId, pageable);
+        return getAllTruckDriverAssignmentsUseCase.execute(truckId, driverId, pageable);
     }
 
     @GetMapping("/{assignmentId}")
-    @Operation(summary = "Consulta una asignación por id dentro de la empresa; "
-            + "PARTNER solo asignaciones de sus camiones, DRIVER solo las suyas")
+    @Operation(summary = "Consulta una asignación por id")
     public TruckDriverAssignmentResponse getById(
-            @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
             @Parameter(description = "Identificador de la asignación") @PathVariable Long assignmentId) {
-        return getTruckDriverAssignmentByIdUseCase.execute(companyId, assignmentId);
+        return getTruckDriverAssignmentByIdUseCase.execute(assignmentId);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Asigna un conductor a un camión de un socio con vigencia; no modifica la propiedad "
-            + "del camión ni permite solapes (SUPER_ADMIN o SECRETARY de esa empresa)")
-    public TruckDriverAssignmentResponse assign(
-            @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
-            @Valid @RequestBody TruckDriverAssignmentRequest request) {
-        return assignTruckDriverUseCase.execute(companyId, request);
+    @Operation(summary = "Asigna un conductor a un camión")
+    public TruckDriverAssignmentResponse assign(@Valid @RequestBody TruckDriverAssignmentRequest request) {
+        return assignTruckDriverUseCase.execute(request);
     }
 
     @PutMapping("/{assignmentId}/end")
-    @Operation(summary = "Finaliza una asignación abierta conservando el historial "
-            + "(SUPER_ADMIN o SECRETARY de esa empresa)")
+    @Operation(summary = "Finaliza una asignación")
     public TruckDriverAssignmentResponse end(
-            @Parameter(description = "Identificador de la empresa (tenant de la ruta)") @PathVariable Long companyId,
             @Parameter(description = "Identificador de la asignación") @PathVariable Long assignmentId,
             @Valid @RequestBody TruckDriverAssignmentEndRequest request) {
-        return endTruckDriverAssignmentUseCase.execute(companyId, assignmentId, request);
+        return endTruckDriverAssignmentUseCase.execute(assignmentId, request);
     }
 }

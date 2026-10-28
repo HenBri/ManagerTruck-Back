@@ -11,15 +11,68 @@ public class UserUpdateRequest {
 
     @NotBlank
     @Size(max = 100)
-    private String name;
+    private String firstName;
 
     @NotBlank
-    @Size(max = 150)
-    private String lastname;
+    @Size(max = 100)
+    private String lastName;
+
+    @Size(max = 100)
+    private String maternalLastName;
 
     @Size(max = 30)
-    private String ci;
+    private String documentNumber;
 
     @Size(max = 25)
     private String phone;
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public String getMaternalLastName() {
+        return maternalLastName;
+    }
+
+    public String getDocumentNumber() {
+        return documentNumber;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public String getName() {
+        return firstName;
+    }
+
+    public void setName(String name) {
+        if (this.firstName == null) {
+            this.firstName = name;
+        }
+    }
+
+    public String getLastname() {
+        return lastName;
+    }
+
+    public void setLastname(String lastname) {
+        if (this.lastName == null) {
+            this.lastName = lastname;
+        }
+    }
+
+    public String getCi() {
+        return documentNumber;
+    }
+
+    public void setCi(String ci) {
+        if (this.documentNumber == null) {
+            this.documentNumber = ci;
+        }
+    }
 }
