@@ -55,7 +55,7 @@ Todos los endpoints `GET` de listado aceptan:
 - `401 Unauthorized`: Falta de cabecera `Authorization` o credenciales erróneas.
 - `403 Forbidden`: El usuario autenticado carece de permisos para realizar la acción.
 - `404 Not Found`: El identificador solicitado no existe o fue marcado como eliminado.
-- `409 Conflict`: Regla de negocio infringida (códigos o placas duplicadas, transiciones de estado no permitidas, asignación de choferes o camiones inactivos).
+- `409 Conflict`: Regla de negocio infringida (códigos o placas duplicadas, transiciones de estado no permitidas, asignación de choferes o camiones inactivos, o camión ya asignado a un flete activo).
 
 ---
 
@@ -508,6 +508,7 @@ Todos los endpoints `GET` de listado aceptan:
 - **Método:** `GET`
 - **Ruta:** `/api/trucks`
 - **Permiso:** `ADMIN`, `SECRETARY` (ven todos); `PARTNER` (solo ve sus propios camiones).
+- **Filtro opcional:** `?availableForFreight=true` devuelve únicamente camiones `ACTIVE` que no tienen un flete `PENDIENTE` o `EN_PROCESO` asignado.
 
 #### 7.2 Consultar Camión por ID
 - **Método:** `GET`

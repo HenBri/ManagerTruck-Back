@@ -33,6 +33,12 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
+    public Contract findByIdForUpdate(Long contractId) {
+        return contractRepository.findActiveByIdForUpdate(contractId)
+                .orElseThrow(() -> new ResourceNotFoundException("Contrato no encontrado con id " + contractId));
+    }
+
+    @Override
     public Optional<Contract> findOptionalById(Long contractId) {
         return contractRepository.findActiveById(contractId);
     }
@@ -55,5 +61,15 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public Page<Contract> findByClientId(Long clientId, Pageable pageable) {
         return contractRepository.findByClientId(clientId, pageable);
+    }
+
+    @Override
+    public Page<Contract> findAvailableForContainers(Pageable pageable) {
+        return contractRepository.findAvailableForContainers(pageable);
+    }
+
+    @Override
+    public Page<Contract> findAvailableForContainersByClientId(Long clientId, Pageable pageable) {
+        return contractRepository.findAvailableForContainersByClientId(clientId, pageable);
     }
 }

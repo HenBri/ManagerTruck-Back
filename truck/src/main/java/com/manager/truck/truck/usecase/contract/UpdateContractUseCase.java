@@ -3,7 +3,9 @@ package com.manager.truck.truck.usecase.contract;
 import com.manager.truck.truck.domain.Contract;
 import com.manager.truck.truck.domain.dto.request.ContractUpdateRequest;
 import com.manager.truck.truck.domain.dto.response.ContractResponse;
+import com.manager.truck.truck.exception.ConflictException;
 import com.manager.truck.truck.security.CurrentUserProvider;
+import com.manager.truck.truck.service.ContainerService;
 import com.manager.truck.truck.service.ContractService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UpdateContractUseCase {
 
     private final ContractService contractService;
+    private final ContainerService containerService;
     private final CurrentUserProvider currentUserProvider;
 
     @Transactional
@@ -28,7 +31,14 @@ public class UpdateContractUseCase {
         if (request.getActualDeliveryDate() != null) contract.setActualDeliveryDate(request.getActualDeliveryDate());
         if (request.getReferenceDocument() != null) contract.setReferenceDocument(request.getReferenceDocument());
         if (request.getDeclaredTotalWeightKg() != null) contract.setDeclaredTotalWeightKg(request.getDeclaredTotalWeightKg());
-        if (request.getExpectedContainerCount() != null) contract.setExpectedContainerCount(request.getExpectedContainerCount());
+        if (request.getExpectedContainerCount() != null) {
+            long currentContainers = containerService.countActiveByContractId(contractId);
+            if (request.getExpectedContainerCount() < currentContainers) {
+                throw new ConflictException("La cantidad declarada no puede ser menor que los "
+                        + currentContainers + " contenedores existentes");
+            }
+            contract.setExpectedContainerCount(request.getExpectedContainerCount());
+        }
         if (request.getObservations() != null) contract.setObservations(request.getObservations());
         if (request.getContractAmount() != null) contract.setContractAmount(request.getContractAmount());
         if (request.getContractDate() != null) contract.setContractDate(request.getContractDate());

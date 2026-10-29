@@ -22,7 +22,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "WHERE LOWER(p.email) = LOWER(:email) AND u.isDelete = false")
     boolean existsByPersonEmail(@Param("email") String email);
 
-    @Query("SELECT u FROM User u WHERE u.userId = :userId AND u.isDelete = false")
+    @Query("SELECT u FROM User u JOIN FETCH u.person p "
+            + "WHERE u.userId = :userId AND u.isDelete = false")
     Optional<User> findActiveById(@Param("userId") Long userId);
 
     @Query(value = "SELECT r.role_name FROM user_role ur "

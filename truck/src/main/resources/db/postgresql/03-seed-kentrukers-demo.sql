@@ -1,129 +1,53 @@
--- Datos iniciales de demostración para KenTrukers.
--- Ejecutar después de 02-seed-base.sql sobre truck_sass.
--- Todas las cuentas usan contraseña: kentrukers (almacenada como BCrypt).
--- Cambiar estas credenciales después de la primera autenticación.
--- Este script inserta los usuarios y asigna roles; no crea ningún dato destructivo.
-
+-- Cuentas demo para el esquema actual.
+-- Contraseña de todas las cuentas: kentrukers
 BEGIN;
 
-DO $$
-DECLARE
-    v_company_id BIGINT;
-    v_super_admin_id BIGINT;
-    v_secretary_id BIGINT;
-    v_partner_user_id BIGINT;
-    v_driver_user_id BIGINT;
-    v_super_admin_role_id SMALLINT;
-    v_secretary_role_id SMALLINT;
-    v_partner_role_id SMALLINT;
-    v_driver_role_id SMALLINT;
-    v_partner_id BIGINT;
-BEGIN
-    -- Obtener o crear el tenant una sola vez.
-    SELECT company_id INTO v_company_id
-    FROM company
-    WHERE company_name = 'KenTrukers'
-    ORDER BY company_id
-    LIMIT 1;
+INSERT INTO person (first_name, last_name, email, state)
+SELECT 'Super', 'Admin', 'superadmin@kentrukers.com', 'ACTIVE'
+WHERE NOT EXISTS (SELECT 1 FROM person WHERE lower(email) = lower('superadmin@kentrukers.com') AND is_delete = false);
 
-    IF v_company_id IS NULL THEN
-        INSERT INTO company (company_name, company_status)
-        VALUES ('KenTrukers', 'ACTIVE')
-        RETURNING company_id INTO v_company_id;
-    END IF;
+INSERT INTO person (first_name, last_name, email, state)
+SELECT 'Secretaria', 'KenTrukers', 'secretaria@kentrukers.com', 'ACTIVE'
+WHERE NOT EXISTS (SELECT 1 FROM person WHERE lower(email) = lower('secretaria@kentrukers.com') AND is_delete = false);
 
-    -- Las cuatro cuentas usan BCrypt para contraseña `kentrukers`.
-    INSERT INTO user_table (user_email, password_hash, user_name, user_lastname, user_status)
-    VALUES ('superadmin@kentrukers.com', '$2a$10$f08iselxXvYKiVH79DpfPed3duDxCwHqCaPflDcrtZ4giQoQ39FHi', 'Super', 'Admin', 'ACTIVE')
-    ON CONFLICT (user_email) DO UPDATE SET
-        password_hash = EXCLUDED.password_hash,
-        user_name = EXCLUDED.user_name,
-        user_lastname = EXCLUDED.user_lastname,
-        user_status = 'ACTIVE'
-    RETURNING user_id INTO v_super_admin_id;
+INSERT INTO person (first_name, last_name, email, state)
+SELECT 'Socio', 'KenTrukers', 'socio@kentrukers.com', 'ACTIVE'
+WHERE NOT EXISTS (SELECT 1 FROM person WHERE lower(email) = lower('socio@kentrukers.com') AND is_delete = false);
 
-    INSERT INTO user_table (user_email, password_hash, user_name, user_lastname, user_status)
-    VALUES ('secretaria@kentrukers.com', '$2a$10$f08iselxXvYKiVH79DpfPed3duDxCwHqCaPflDcrtZ4giQoQ39FHi', 'Secretaria', 'KenTrukers', 'ACTIVE')
-    ON CONFLICT (user_email) DO UPDATE SET
-        password_hash = EXCLUDED.password_hash,
-        user_name = EXCLUDED.user_name,
-        user_lastname = EXCLUDED.user_lastname,
-        user_status = 'ACTIVE'
-    RETURNING user_id INTO v_secretary_id;
+INSERT INTO person (first_name, last_name, email, state)
+SELECT 'Conductor', 'KenTrukers', 'conductor@kentrukers.com', 'ACTIVE'
+WHERE NOT EXISTS (SELECT 1 FROM person WHERE lower(email) = lower('conductor@kentrukers.com') AND is_delete = false);
 
-    INSERT INTO user_table (user_email, password_hash, user_name, user_lastname, user_status)
-    VALUES ('socio@kentrukers.com', '$2a$10$f08iselxXvYKiVH79DpfPed3duDxCwHqCaPflDcrtZ4giQoQ39FHi', 'Socio', 'KenTrukers', 'ACTIVE')
-    ON CONFLICT (user_email) DO UPDATE SET
-        password_hash = EXCLUDED.password_hash,
-        user_name = EXCLUDED.user_name,
-        user_lastname = EXCLUDED.user_lastname,
-        user_status = 'ACTIVE'
-    RETURNING user_id INTO v_partner_user_id;
+-- BCrypt de: kentrukers
+INSERT INTO user_table (person_id, password_hash, state)
+SELECT p.person_id, '$2a$10$f08iselxXvYKiVH79DpfPed3duDxCwHqCaPflDcrtZ4giQoQ39FHi', 'ACTIVE'
+FROM person p
+WHERE lower(p.email) IN (
+    'superadmin@kentrukers.com', 'secretaria@kentrukers.com',
+    'socio@kentrukers.com', 'conductor@kentrukers.com'
+)
+ON CONFLICT (person_id) DO UPDATE
+SET password_hash = EXCLUDED.password_hash, state = 'ACTIVE', is_delete = false;
 
-    INSERT INTO user_table (user_email, password_hash, user_name, user_lastname, user_status)
-    VALUES ('conductor@kentrukers.com', '$2a$10$f08iselxXvYKiVH79DpfPed3duDxCwHqCaPflDcrtZ4giQoQ39FHi', 'Conductor', 'KenTrukers', 'ACTIVE')
-    ON CONFLICT (user_email) DO UPDATE SET
-        password_hash = EXCLUDED.password_hash,
-        user_name = EXCLUDED.user_name,
-        user_lastname = EXCLUDED.user_lastname,
-        user_status = 'ACTIVE'
-    RETURNING user_id INTO v_driver_user_id;
-
-    SELECT role_id INTO STRICT v_super_admin_role_id FROM role_table WHERE role_name = 'SUPER_ADMIN' AND role_scope = 'PLATFORM';
-    SELECT role_id INTO STRICT v_secretary_role_id FROM role_table WHERE role_name = 'SECRETARY' AND role_scope = 'COMPANY';
-    SELECT role_id INTO STRICT v_partner_role_id FROM role_table WHERE role_name = 'PARTNER' AND role_scope = 'COMPANY';
-    SELECT role_id INTO STRICT v_driver_role_id FROM role_table WHERE role_name = 'DRIVER' AND role_scope = 'COMPANY';
-
-    -- El SUPER_ADMIN es global: no se agrega como miembro de KenTrukers.
-    INSERT INTO platform_user_role (user_id, role_id, role_scope)
-    VALUES (v_super_admin_id, v_super_admin_role_id, 'PLATFORM')
-    ON CONFLICT (user_id, role_id) DO NOTHING;
-
-    -- Membresías activas para los roles operativos de la empresa.
-    INSERT INTO company_user (company_id, user_id, membership_status)
-    VALUES
-        (v_company_id, v_secretary_id, 'ACTIVE'),
-        (v_company_id, v_partner_user_id, 'ACTIVE'),
-        (v_company_id, v_driver_user_id, 'ACTIVE')
-    ON CONFLICT (company_id, user_id) DO UPDATE SET membership_status = 'ACTIVE';
-
-    INSERT INTO company_user_role (company_id, user_id, role_id, role_scope)
-    VALUES
-        (v_company_id, v_secretary_id, v_secretary_role_id, 'COMPANY'),
-        (v_company_id, v_partner_user_id, v_partner_role_id, 'COMPANY'),
-        (v_company_id, v_driver_user_id, v_driver_role_id, 'COMPANY')
-    ON CONFLICT (company_id, user_id, role_id) DO NOTHING;
-
-    -- Perfil socio vinculado a su usuario y tenant.
-    SELECT partner_id INTO v_partner_id
-    FROM partner_table
-    WHERE company_id = v_company_id AND user_id = v_partner_user_id
-    ORDER BY partner_id
-    LIMIT 1;
-
-    IF v_partner_id IS NULL THEN
-        INSERT INTO partner_table (company_id, user_id, partner_type, partner_name, partner_state)
-        VALUES (v_company_id, v_partner_user_id, 'PERSON', 'Socio KenTrukers', 'ACTIVE')
-        RETURNING partner_id INTO v_partner_id;
-    ELSE
-        UPDATE partner_table
-        SET partner_type = 'PERSON', partner_name = 'Socio KenTrukers', partner_state = 'ACTIVE'
-        WHERE partner_id = v_partner_id;
-    END IF;
-
-    -- Perfil conductor independiente del socio (person_partner_id queda NULL).
-    INSERT INTO driver_table (company_id, user_id, driver_name, driver_license, driver_state)
-    VALUES (v_company_id, v_driver_user_id, 'Conductor KenTrukers', 'KENTRUKERS-DEMO-001', 'ACTIVE')
-    ON CONFLICT (company_id, user_id) DO UPDATE SET
-        driver_name = EXCLUDED.driver_name,
-        driver_license = EXCLUDED.driver_license,
-        driver_state = 'ACTIVE';
-END $$;
+INSERT INTO user_role (user_id, role_id, state)
+SELECT u.user_id, r.role_id, 'ACTIVE'
+FROM user_table u
+JOIN person p ON p.person_id = u.person_id
+JOIN role_table r ON r.role_name = CASE lower(p.email)
+    WHEN 'superadmin@kentrukers.com' THEN 'ADMIN'
+    WHEN 'secretaria@kentrukers.com' THEN 'SECRETARY'
+    WHEN 'socio@kentrukers.com' THEN 'PARTNER'
+    WHEN 'conductor@kentrukers.com' THEN 'DRIVER'
+END
+WHERE lower(p.email) IN (
+    'superadmin@kentrukers.com', 'secretaria@kentrukers.com',
+    'socio@kentrukers.com', 'conductor@kentrukers.com'
+)
+ON CONFLICT (user_id, role_id) DO UPDATE SET state = 'ACTIVE', is_delete = false;
 
 COMMIT;
 
--- Cuentas de acceso (las cuatro contraseñas son `kentrukers`):
--- superadmin@kentrukers.com  -> SUPER_ADMIN (PLATFORM)
--- secretaria@kentrukers.com -> SECRETARY (KenTrukers)
--- socio@kentrukers.com      -> PARTNER (KenTrukers, perfil partner)
--- conductor@kentrukers.com  -> DRIVER (KenTrukers, perfil driver)
+-- superadmin@kentrukers.com / kentrukers -> ADMIN
+-- secretaria@kentrukers.com / kentrukers -> SECRETARY
+-- socio@kentrukers.com / kentrukers -> PARTNER
+-- conductor@kentrukers.com / kentrukers -> DRIVER

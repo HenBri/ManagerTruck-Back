@@ -14,6 +14,8 @@ public interface ContractService {
 
     Contract findById(Long contractId);
 
+    Contract findByIdForUpdate(Long contractId);
+
     Optional<Contract> findOptionalById(Long contractId);
 
     boolean existsByContractCode(String contractCode);
@@ -23,4 +25,8 @@ public interface ContractService {
     Page<Contract> findAll(Pageable pageable);
 
     Page<Contract> findByClientId(Long clientId, Pageable pageable);
+
+    Page<Contract> findAvailableForContainers(Pageable pageable);
+
+    Page<Contract> findAvailableForContainersByClientId(Long clientId, Pageable pageable);
 }

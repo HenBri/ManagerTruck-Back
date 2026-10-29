@@ -415,6 +415,26 @@ END $$;
 CREATE TRIGGER trg_protect_container_charge BEFORE UPDATE OF charge_id ON container_table
 FOR EACH ROW EXECUTE FUNCTION protect_container_charge();
 
+-- El contrato no puede superar la cantidad de contenedores declarada.
+CREATE FUNCTION validate_contract_container_limit() RETURNS trigger LANGUAGE plpgsql AS $$
+DECLARE v_contract_id BIGINT; v_expected INTEGER; v_current INTEGER;
+BEGIN
+  SELECT ch.contract_id INTO v_contract_id FROM charge_table ch WHERE ch.charge_id=NEW.charge_id;
+  PERFORM 1 FROM contract_table WHERE contract_id=v_contract_id FOR UPDATE;
+  SELECT expected_container_count INTO v_expected FROM contract_table WHERE contract_id=v_contract_id;
+  IF v_expected IS NOT NULL THEN
+    SELECT COUNT(*) INTO v_current FROM container_table c
+      JOIN charge_table ch ON ch.charge_id=c.charge_id
+      WHERE ch.contract_id=v_contract_id AND NOT c.is_delete;
+    IF v_current >= v_expected THEN
+      RAISE EXCEPTION 'El contrato ya alcanzo el maximo de % contenedores', v_expected;
+    END IF;
+  END IF;
+  RETURN NEW;
+END $$;
+CREATE TRIGGER trg_validate_contract_container_limit BEFORE INSERT ON container_table
+FOR EACH ROW EXECUTE FUNCTION validate_contract_container_limit();
+
 -- No permitir reubicar una carga entre contratos mientras sus contenedores se usan en fletes.
 CREATE FUNCTION protect_charge_contract() RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
@@ -434,13 +454,29 @@ CREATE FUNCTION validate_freight_availability() RETURNS trigger LANGUAGE plpgsql
 DECLARE v_conflict BIGINT;
 BEGIN
   IF NEW.is_delete OR NEW.state IN ('COMPLETADO','CANCELADO') THEN RETURN NEW; END IF;
+  IF NEW.truck_id IS NOT NULL THEN
+    PERFORM pg_advisory_xact_lock(4002, hashtext(NEW.truck_id::text));
+    IF EXISTS (
+      SELECT 1 FROM freight_table f
+       WHERE f.freight_id<>NEW.freight_id AND f.truck_id=NEW.truck_id
+         AND NOT f.is_delete AND f.state IN ('PENDIENTE','EN_PROCESO')
+    ) THEN
+      RAISE EXCEPTION 'Camion ya asignado a un flete activo';
+    END IF;
+  END IF;
+  PERFORM pg_advisory_xact_lock(4001, hashtext(NEW.container_id::text));
+  IF EXISTS (
+    SELECT 1 FROM freight_table f
+     WHERE f.freight_id<>NEW.freight_id AND f.container_id=NEW.container_id
+       AND NOT f.is_delete AND f.state IN ('PENDIENTE','EN_PROCESO')
+  ) THEN
+    RAISE EXCEPTION 'Contenedor ya asignado a un flete activo';
+  END IF;
   IF (NEW.scheduled_departure IS NULL) <> (NEW.scheduled_arrival IS NULL) THEN
      RAISE EXCEPTION 'Ambas fechas programadas del flete deben informarse juntas';
   END IF;
   IF NEW.scheduled_departure IS NULL THEN RETURN NEW; END IF;
   -- bloqueos de transacción (los ids de recurso son distintos por tipo)
-  PERFORM pg_advisory_xact_lock(4001, hashtext(NEW.container_id::text));
-  IF NEW.truck_id IS NOT NULL THEN PERFORM pg_advisory_xact_lock(4002, hashtext(NEW.truck_id::text)); END IF;
   SELECT f.freight_id INTO v_conflict FROM freight_table f
    WHERE f.freight_id<>NEW.freight_id AND NOT f.is_delete
      AND f.state NOT IN ('CANCELADO','COMPLETADO')

@@ -45,8 +45,9 @@ public class ContractController {
     @Operation(summary = "Lista los contratos con filtro opcional por cliente")
     public ContractsResponse getAll(
             @Parameter(description = "Filtra por cliente dueño del contrato") @RequestParam(required = false) Long clientId,
+            @RequestParam(defaultValue = "false") boolean availableForContainers,
             @PageableDefault(size = 20, sort = "contractId") Pageable pageable) {
-        return getAllContractsUseCase.execute(clientId, pageable);
+        return getAllContractsUseCase.execute(clientId, availableForContainers, pageable);
     }
 
     @GetMapping("/{contractId}")

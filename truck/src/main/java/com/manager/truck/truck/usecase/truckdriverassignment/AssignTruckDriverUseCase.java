@@ -33,11 +33,11 @@ public class AssignTruckDriverUseCase {
         }
         Truck truck = truckService.findById(request.getTruckId());
         Driver driver = driverService.findById(request.getDriverId());
-        if (!"ACTIVO".equalsIgnoreCase(truck.getState())) {
+        if (!"ACTIVE".equalsIgnoreCase(truck.getState())) {
             throw new ConflictException("Solo se pueden asignar conductores a camiones activos; el camión "
                     + truck.getTruckId() + " está en estado " + truck.getState());
         }
-        if (!"ACTIVO".equalsIgnoreCase(driver.getState())) {
+        if (!"ACTIVE".equalsIgnoreCase(driver.getState())) {
             throw new ConflictException("No se pueden asignar conductores inactivos; el conductor "
                     + driver.getDriverId() + " está en estado " + driver.getState());
         }

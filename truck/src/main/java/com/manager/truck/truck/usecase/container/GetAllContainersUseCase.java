@@ -17,10 +17,12 @@ public class GetAllContainersUseCase {
     private final ContainerService containerService;
     private final CurrentUserProvider currentUserProvider;
 
-    public ContainersResponse execute(Long chargeId, Pageable pageable) {
+    public ContainersResponse execute(Long chargeId, boolean availableForFreight, Pageable pageable) {
         currentUserProvider.requireAdminOrSecretary();
         Page<Container> page;
-        if (chargeId != null) {
+        if (availableForFreight) {
+            page = containerService.findAllAvailableForFreight(pageable);
+        } else if (chargeId != null) {
             page = containerService.findByChargeId(chargeId, pageable);
         } else {
             page = containerService.findAll(pageable);

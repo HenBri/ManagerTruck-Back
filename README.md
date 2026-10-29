@@ -55,13 +55,14 @@ El sistema está Pensado para una arquitectura moderna basada en microservicios.
 
 ### Base de datos
 
-Ejecutar `00-create-database.sql` conectado a una base existente, luego ejecutar en orden `01-create-schema.sql`, `02-seed-base.sql` y `03-seed-kentrukers-demo.sql` conectado a `truck_sass`. Los archivos están en `truck/src/main/resources/db/postgresql/`. El script de esquema crea las tablas en `public`; no migra datos desde MySQL. Ejemplo con `psql`:
+Ejecutar `00-create-database.sql` conectado a una base existente, luego ejecutar en orden `01-create-schema.sql`, `02-seed-base.sql`, `03-seed-kentrukers-demo.sql` y `04-add-foreign-keys.sql` conectado a `truck_sass`. Los archivos están en `truck/src/main/resources/db/postgresql/`. El script de esquema crea las tablas en `public`; no migra datos desde MySQL. Ejemplo con `psql`:
 
 ```shell
 psql -U postgres -d postgres -f truck/src/main/resources/db/postgresql/00-create-database.sql
 psql -U postgres -d truck_sass -f truck/src/main/resources/db/postgresql/01-create-schema.sql
 psql -U postgres -d truck_sass -f truck/src/main/resources/db/postgresql/02-seed-base.sql
 psql -U postgres -d truck_sass -f truck/src/main/resources/db/postgresql/03-seed-kentrukers-demo.sql
+psql -U postgres -d truck_sass -f truck/src/main/resources/db/postgresql/04-add-foreign-keys.sql
 ```
 
 La semilla demo crea KenTrukers y cuatro cuentas: `superadmin@kentrukers.com`, `secretaria@kentrukers.com`, `socio@kentrukers.com` y `conductor@kentrukers.com`. La contraseña inicial de todas es `kentrukers`; se almacena como hash BCrypt en la base. Cambiarla después del primer inicio de sesión.

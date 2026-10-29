@@ -1,0 +1,25 @@
+package com.manager.truck.truck.domain.dto.request;
+
+import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+public class ContractChargeRequest {
+
+    @Size(max = 255)
+    private String chargeDescription;
+
+    @Size(max = 100)
+    private String chargeType;
+
+    @Size(max = 80)
+    private String cargoReference;
+
+    private String goodsDescription;
+
+    private Boolean hazardousGoods = false;
+
+    private String handlingInstructions;
+}

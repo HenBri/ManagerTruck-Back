@@ -17,13 +17,17 @@ public class GetAllContractsUseCase {
     private final ContractService contractService;
     private final CurrentUserProvider currentUserProvider;
 
-    public ContractsResponse execute(Long clientId, Pageable pageable) {
+    public ContractsResponse execute(Long clientId, boolean availableForContainers, Pageable pageable) {
         currentUserProvider.requireAdminOrSecretary();
         Page<Contract> page;
         if (clientId != null) {
-            page = contractService.findByClientId(clientId, pageable);
+            page = availableForContainers
+                    ? contractService.findAvailableForContainersByClientId(clientId, pageable)
+                    : contractService.findByClientId(clientId, pageable);
         } else {
-            page = contractService.findAll(pageable);
+            page = availableForContainers
+                    ? contractService.findAvailableForContainers(pageable)
+                    : contractService.findAll(pageable);
         }
         Page<ContractResponse> content = page.map(ContractResponse::from);
         return new ContractsResponse(content.getContent(), content.getNumber(), content.getSize(),

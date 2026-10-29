@@ -25,4 +25,8 @@ public interface TruckService {
     Page<Truck> findAll(Pageable pageable);
 
     Page<Truck> findByOwnerPartnerId(Long ownerPartnerId, Pageable pageable);
+
+    Page<Truck> findAllAvailableForFreight(Pageable pageable);
+
+    Page<Truck> findAvailableForFreightByOwnerPartnerId(Long ownerPartnerId, Pageable pageable);
 }

@@ -2,7 +2,9 @@ package com.manager.truck.truck.usecase.contract;
 
 import com.manager.truck.truck.domain.Client;
 import com.manager.truck.truck.domain.Contract;
+import com.manager.truck.truck.domain.Charge;
 import com.manager.truck.truck.domain.dto.request.ContractRequest;
+import com.manager.truck.truck.domain.dto.request.ContractChargeRequest;
 import com.manager.truck.truck.domain.dto.response.ContractResponse;
 import com.manager.truck.truck.domain.enums.ContractState;
 import com.manager.truck.truck.domain.enums.OperationType;
@@ -10,6 +12,7 @@ import com.manager.truck.truck.exception.ConflictException;
 import com.manager.truck.truck.security.CurrentUserProvider;
 import com.manager.truck.truck.service.ClientService;
 import com.manager.truck.truck.service.ContractService;
+import com.manager.truck.truck.service.ChargeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +23,7 @@ public class SaveContractUseCase {
 
     private final ContractService contractService;
     private final ClientService clientService;
+    private final ChargeService chargeService;
     private final CurrentUserProvider currentUserProvider;
 
     @Transactional
@@ -48,6 +52,20 @@ public class SaveContractUseCase {
         contract.setContractType(request.getContractType());
         contract.setState(ContractState.PENDIENTE);
         Contract saved = contractService.save(contract);
+        if (request.getCharges() != null) {
+            for (ContractChargeRequest chargeRequest : request.getCharges()) {
+                Charge charge = new Charge();
+                charge.setContractId(saved.getContractId());
+                charge.setChargeDescription(chargeRequest.getChargeDescription());
+                charge.setChargeType(chargeRequest.getChargeType());
+                charge.setCargoReference(chargeRequest.getCargoReference());
+                charge.setGoodsDescription(chargeRequest.getGoodsDescription());
+                charge.setHazardousGoods(Boolean.TRUE.equals(chargeRequest.getHazardousGoods()));
+                charge.setHandlingInstructions(chargeRequest.getHandlingInstructions());
+                charge.setState("PENDING");
+                chargeService.save(charge);
+            }
+        }
         return ContractResponse.from(saved);
     }
 }

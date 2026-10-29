@@ -21,13 +21,17 @@ public class GetAllTrucksUseCase {
     private final UserService userService;
     private final CurrentUserProvider currentUserProvider;
 
-    public TrucksResponse execute(Pageable pageable) {
+    public TrucksResponse execute(Pageable pageable, boolean availableForFreight) {
         Page<Truck> page;
         if (currentUserProvider.isAdmin() || currentUserProvider.isSecretary()) {
-            page = truckService.findAll(pageable);
+            page = availableForFreight
+                    ? truckService.findAllAvailableForFreight(pageable)
+                    : truckService.findAll(pageable);
         } else if (currentUserProvider.isPartner()) {
             User user = userService.findById(currentUserProvider.get().userId());
-            page = truckService.findByOwnerPartnerId(user.getPersonId(), pageable);
+            page = availableForFreight
+                    ? truckService.findAvailableForFreightByOwnerPartnerId(user.getPersonId(), pageable)
+                    : truckService.findByOwnerPartnerId(user.getPersonId(), pageable);
         } else {
             throw new ForbiddenOperationException("No tienes permiso para consultar camiones");
         }

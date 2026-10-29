@@ -38,6 +38,22 @@ public class ContainerServiceImpl implements ContainerService {
     }
 
     @Override
+    public Container findByIdForUpdate(Long containerId) {
+        return containerRepository.findActiveByIdForUpdate(containerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Contenedor no encontrado con id " + containerId));
+    }
+
+    @Override
+    public long countActiveByContractId(Long contractId) {
+        return containerRepository.countActiveByContractId(contractId);
+    }
+
+    @Override
+    public Page<Container> findAllAvailableForFreight(Pageable pageable) {
+        return containerRepository.findAllAvailableForFreight(pageable);
+    }
+
+    @Override
     public boolean existsByContainerCode(String containerCode) {
         return containerRepository.existsByContainerCode(containerCode);
     }

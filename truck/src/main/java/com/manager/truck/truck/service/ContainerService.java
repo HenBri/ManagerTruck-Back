@@ -16,6 +16,10 @@ public interface ContainerService {
 
     Optional<Container> findOptionalById(Long containerId);
 
+    Container findByIdForUpdate(Long containerId);
+
+    long countActiveByContractId(Long contractId);
+
     boolean existsByContainerCode(String containerCode);
 
     boolean existsByContainerCodeAndContainerIdNot(String containerCode, Long containerId);
@@ -23,4 +27,6 @@ public interface ContainerService {
     Page<Container> findAll(Pageable pageable);
 
     Page<Container> findByChargeId(Long chargeId, Pageable pageable);
+
+    Page<Container> findAllAvailableForFreight(Pageable pageable);
 }

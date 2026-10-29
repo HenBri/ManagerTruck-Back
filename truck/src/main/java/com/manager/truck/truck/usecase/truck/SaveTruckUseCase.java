@@ -28,7 +28,7 @@ public class SaveTruckUseCase {
             throw new BadRequestException("ownerPartnerId es obligatorio: todo camión debe tener un socio propietario");
         }
         Partner owner = partnerService.findById(request.getOwnerPartnerId());
-        if (!"ACTIVO".equalsIgnoreCase(owner.getState())) {
+        if (!"ACTIVE".equalsIgnoreCase(owner.getState())) {
             throw new ConflictException("No se pueden asignar camiones a un socio inactivo");
         }
         if (truckService.existsByTruckBoard(request.getTruckBoard().trim())) {
@@ -50,7 +50,7 @@ public class SaveTruckUseCase {
         truck.setChassisPlate(request.getChassisPlate());
         truck.setInsuranceExpiration(request.getInsuranceExpiration());
         truck.setTechnicalInspectionExpiration(request.getTechnicalInspectionExpiration());
-        truck.setState("ACTIVO");
+        truck.setState("ACTIVE");
 
         Truck saved = truckService.save(truck);
         return TruckResponse.from(saved);

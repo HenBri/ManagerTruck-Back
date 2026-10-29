@@ -44,8 +44,9 @@ public class ContainerController {
     @Operation(summary = "Lista los contenedores con filtro opcional por carga")
     public ContainersResponse getAll(
             @Parameter(description = "Filtra por carga dueña del contenedor") @RequestParam(required = false) Long chargeId,
+            @RequestParam(defaultValue = "false") boolean availableForFreight,
             @PageableDefault(size = 20, sort = "containerId") Pageable pageable) {
-        return getAllContainersUseCase.execute(chargeId, pageable);
+        return getAllContainersUseCase.execute(chargeId, availableForFreight, pageable);
     }
 
     @GetMapping("/{containerId}")

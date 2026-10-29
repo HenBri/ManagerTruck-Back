@@ -9,6 +9,8 @@ import java.util.Optional;
 
 public interface FreightService {
 
+    int completeByContractId(Long contractId);
+
     Freight save(Freight freight);
 
     Freight update(Freight freight);
@@ -23,6 +25,12 @@ public interface FreightService {
 
     boolean existsByFreightCodeAndFreightIdNot(String freightCode, Long freightId);
 
+    boolean existsActiveByTruckId(Long truckId);
+
+    boolean existsActiveByTruckIdExcluding(Long truckId, Long freightId);
+
+    boolean existsActiveByContainerId(Long containerId);
+
     Page<Freight> findAll(Pageable pageable);
 
     Page<Freight> findByContractId(Long contractId, Pageable pageable);
@@ -31,4 +39,3 @@ public interface FreightService {
 
     Page<Freight> findByState(FreightState state, Pageable pageable);
 }
-

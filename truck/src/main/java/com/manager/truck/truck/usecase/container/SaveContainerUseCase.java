@@ -2,12 +2,14 @@ package com.manager.truck.truck.usecase.container;
 
 import com.manager.truck.truck.domain.Charge;
 import com.manager.truck.truck.domain.Container;
+import com.manager.truck.truck.domain.Contract;
 import com.manager.truck.truck.domain.dto.request.ContainerRequest;
 import com.manager.truck.truck.domain.dto.response.ContainerResponse;
 import com.manager.truck.truck.exception.ConflictException;
 import com.manager.truck.truck.security.CurrentUserProvider;
 import com.manager.truck.truck.service.ChargeService;
 import com.manager.truck.truck.service.ContainerService;
+import com.manager.truck.truck.service.ContractService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,12 +20,20 @@ public class SaveContainerUseCase {
 
     private final ContainerService containerService;
     private final ChargeService chargeService;
+    private final ContractService contractService;
     private final CurrentUserProvider currentUserProvider;
 
     @Transactional
     public ContainerResponse execute(ContainerRequest request) {
         currentUserProvider.requireAdminOrSecretary();
         Charge charge = chargeService.findById(request.getChargeId());
+        Contract contract = contractService.findByIdForUpdate(charge.getContractId());
+        if (contract.getExpectedContainerCount() != null
+                && containerService.countActiveByContractId(contract.getContractId())
+                >= contract.getExpectedContainerCount()) {
+            throw new ConflictException("El contrato ya alcanzó el máximo de "
+                    + contract.getExpectedContainerCount() + " contenedores");
+        }
         String code = request.getContainerCode().trim();
         if (containerService.existsByContainerCode(code)) {
             throw new ConflictException("Ya existe un contenedor con el código " + code);

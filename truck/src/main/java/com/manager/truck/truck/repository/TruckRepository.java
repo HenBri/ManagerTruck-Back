@@ -26,6 +26,21 @@ public interface TruckRepository extends JpaRepository<Truck, Long> {
     @Query("SELECT t FROM Truck t WHERE t.ownerPartnerId = :ownerPartnerId AND t.isDelete = false")
     Page<Truck> findByOwnerPartnerId(@Param("ownerPartnerId") Long ownerPartnerId, Pageable pageable);
 
+    @Query("SELECT t FROM Truck t WHERE t.isDelete = false AND NOT EXISTS " +
+            "(SELECT f.freightId FROM Freight f WHERE f.truckId = t.truckId " +
+            "AND f.isDelete = false AND f.state IN " +
+            "(com.manager.truck.truck.domain.enums.FreightState.PENDIENTE, " +
+            "com.manager.truck.truck.domain.enums.FreightState.EN_PROCESO))")
+    Page<Truck> findAllAvailableForFreight(Pageable pageable);
+
+    @Query("SELECT t FROM Truck t WHERE t.ownerPartnerId = :ownerPartnerId AND t.isDelete = false " +
+            "AND NOT EXISTS (SELECT f.freightId FROM Freight f WHERE f.truckId = t.truckId " +
+            "AND f.isDelete = false AND f.state IN " +
+            "(com.manager.truck.truck.domain.enums.FreightState.PENDIENTE, " +
+            "com.manager.truck.truck.domain.enums.FreightState.EN_PROCESO))")
+    Page<Truck> findAvailableForFreightByOwnerPartnerId(@Param("ownerPartnerId") Long ownerPartnerId,
+                                                         Pageable pageable);
+
     @Query("SELECT CASE WHEN COUNT(t) > 0 THEN true ELSE false END FROM Truck t " +
             "WHERE t.truckBoard = :truckBoard AND t.isDelete = false")
     boolean existsByTruckBoard(@Param("truckBoard") String truckBoard);

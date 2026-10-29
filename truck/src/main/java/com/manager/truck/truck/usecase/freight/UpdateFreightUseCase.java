@@ -35,16 +35,19 @@ public class UpdateFreightUseCase {
         }
 
         if (request.getTruckId() != null) {
-            Truck truck = truckService.findById(request.getTruckId());
-            if (!"ACTIVO".equalsIgnoreCase(truck.getState())) {
+            Truck truck = truckService.findByIdForUpdate(request.getTruckId());
+            if (!"ACTIVE".equalsIgnoreCase(truck.getState())) {
                 throw new ConflictException("El camión debe estar ACTIVO");
+            }
+            if (freightService.existsActiveByTruckIdExcluding(truck.getTruckId(), freightId)) {
+                throw new ConflictException("El camión ya está asignado a otro flete activo");
             }
             freight.setTruckId(truck.getTruckId());
         }
 
         if (request.getAuxiliaryProviderId() != null) {
             AuxiliaryProvider provider = auxiliaryProviderService.findById(request.getAuxiliaryProviderId());
-            if (!"ACTIVO".equalsIgnoreCase(provider.getState())) {
+            if (!"ACTIVE".equalsIgnoreCase(provider.getState())) {
                 throw new ConflictException("El proveedor auxiliar debe estar ACTIVO");
             }
             freight.setAuxiliaryProviderId(provider.getProviderId());
@@ -79,4 +82,3 @@ public class UpdateFreightUseCase {
         return FreightResponse.from(saved);
     }
 }
-

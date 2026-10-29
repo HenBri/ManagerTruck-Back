@@ -62,4 +62,14 @@ public class TruckServiceImpl implements TruckService {
     public Page<Truck> findByOwnerPartnerId(Long ownerPartnerId, Pageable pageable) {
         return truckRepository.findByOwnerPartnerId(ownerPartnerId, pageable);
     }
+
+    @Override
+    public Page<Truck> findAllAvailableForFreight(Pageable pageable) {
+        return truckRepository.findAllAvailableForFreight(pageable);
+    }
+
+    @Override
+    public Page<Truck> findAvailableForFreightByOwnerPartnerId(Long ownerPartnerId, Pageable pageable) {
+        return truckRepository.findAvailableForFreightByOwnerPartnerId(ownerPartnerId, pageable);
+    }
 }

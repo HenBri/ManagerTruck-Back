@@ -7,15 +7,19 @@ import com.manager.truck.truck.domain.enums.ContractState;
 import com.manager.truck.truck.exception.ConflictException;
 import com.manager.truck.truck.security.CurrentUserProvider;
 import com.manager.truck.truck.service.ContractService;
+import com.manager.truck.truck.service.FreightService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.OffsetDateTime;
 
 @Service
 @RequiredArgsConstructor
 public class UpdateContractStatusUseCase {
 
     private final ContractService contractService;
+    private final FreightService freightService;
     private final CurrentUserProvider currentUserProvider;
 
     @Transactional
@@ -28,7 +32,13 @@ public class UpdateContractStatusUseCase {
             throw new ConflictException("El contrato ya se encuentra en el estado " + current);
         }
         contract.setState(target);
+        if (target == ContractState.ENTREGADO && contract.getActualDeliveryDate() == null) {
+            contract.setActualDeliveryDate(OffsetDateTime.now());
+        }
         Contract saved = contractService.update(contract);
+        if (target == ContractState.ENTREGADO) {
+            freightService.completeByContractId(contractId);
+        }
         return ContractResponse.from(saved);
     }
 }

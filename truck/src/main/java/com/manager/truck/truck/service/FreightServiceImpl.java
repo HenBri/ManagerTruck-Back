@@ -18,6 +18,11 @@ public class FreightServiceImpl implements FreightService {
     private final FreightRepository freightRepository;
 
     @Override
+    public int completeByContractId(Long contractId) {
+        return freightRepository.completeByContractId(contractId);
+    }
+
+    @Override
     public Freight save(Freight freight) {
         return freightRepository.save(freight);
     }
@@ -54,6 +59,21 @@ public class FreightServiceImpl implements FreightService {
     }
 
     @Override
+    public boolean existsActiveByTruckId(Long truckId) {
+        return freightRepository.existsActiveByTruckId(truckId);
+    }
+
+    @Override
+    public boolean existsActiveByTruckIdExcluding(Long truckId, Long freightId) {
+        return freightRepository.existsActiveByTruckIdExcluding(truckId, freightId);
+    }
+
+    @Override
+    public boolean existsActiveByContainerId(Long containerId) {
+        return freightRepository.existsActiveByContainerId(containerId);
+    }
+
+    @Override
     public Page<Freight> findAll(Pageable pageable) {
         return freightRepository.findAllActive(pageable);
     }
@@ -73,4 +93,3 @@ public class FreightServiceImpl implements FreightService {
         return freightRepository.findByState(state, pageable);
     }
 }
-
